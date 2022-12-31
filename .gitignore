@@ -1,3 +1,8 @@
 cmake-build-debug/
 .idea/
 output.txt
+Makefile
+Hyper_Q
+CMakeCache.txt
+cmake_install.cmake
+CMakeFiles
