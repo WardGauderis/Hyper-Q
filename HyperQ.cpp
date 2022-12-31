@@ -24,7 +24,7 @@ std::pair<Action, Strategy> HyperQ::act() {
         random -= x[i];
     }
 
-    assert(false);
+    return {2, x};
 }
 
 void HyperQ::observe(Reward r, Strategy x, Action action_y, Strategy true_y) {
