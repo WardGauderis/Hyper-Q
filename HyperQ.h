@@ -10,7 +10,7 @@
 #include "Definitions.h"
 #include <memory>
 
-static const unsigned int grid_size = 25;
+static const unsigned int grid_size = 5;
 static const unsigned int num_strategies = grid_size * grid_size;
 static const unsigned int num_pairs = num_strategies * num_strategies;
 
@@ -23,7 +23,7 @@ public:
 
     void observe(Reward r, Strategy x, Action action_y, Strategy y) override;
 private:
-    std::array<Reward, num_pairs> hyper_q_table;
+    std::array<Reward, num_pairs> hyper_q_table{};
     std::unique_ptr<StrategyEstimation> estimation;
     float alpha;
     float gamma;

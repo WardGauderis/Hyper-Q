@@ -7,16 +7,11 @@
 #include "EMA.h"
 #include "Bayesian.h"
 #include "Omniscient.h"
+#include "Monotone"
 
 #include <fstream>
 #include <memory>
 #include <sstream>
-
-std::pair<Action, Strategy> random_action() {
-    auto action = static_cast<Action>(rand() % 3);
-    auto strategy = Strategy{1.0f / 3.0f, 1.0f / 3.0f, 1.0f / 3.0f};
-    return {action, strategy};
-}
 
 void run_test(const std::string &output_file,
               const unsigned int steps,
@@ -26,15 +21,15 @@ void run_test(const std::string &output_file,
     std::ofstream output;
     output.open(output_file);
 
+    srand(0);
+
     for (unsigned int i = 0; i < steps; i++) {
-        if (i % 100000 == 0) {
-            std::cout << "Step " << i << std::endl;
-        }
         Action action_x, action_y;
         Strategy strategy_x, strategy_y;
+
         if (i % 1000 == 0) {
-            std::tie(action_x, strategy_x) = random_action();
-            std::tie(action_y, strategy_y) = random_action();
+            std::tie(action_x, strategy_x) = agent_x->random_restart();
+            std::tie(action_y, strategy_y) = agent_y->random_restart();
         } else {
             std::tie(action_x, strategy_x) = agent_x->act();
             std::tie(action_y, strategy_y) = agent_y->act();
@@ -46,6 +41,10 @@ void run_test(const std::string &output_file,
 
         agent_x->observe(reward_x, strategy_x, action_y, strategy_y);
         agent_y->observe(reward_y, strategy_y, action_x, strategy_x);
+
+        if ((i - 1) % 100000 == 0) {
+            std::cout << "Step " << i << std::endl;
+        }
     }
 }
 
@@ -56,20 +55,23 @@ int main() {
     auto alpha = 0.01;
     auto mu = 0.005;
 
-    for (int i = 0; i < 5; i++) {
-        //        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-        //        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+    auto iterations = 1;
 
-        // Create new instances of the agents for each experiment
+    for (int i = 0; i < iterations; i++) {
+//        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+//        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+
         std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+//        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
 
-        // Generate the output file name using string formatting
+//        std::unique_ptr<Agent> agent_x = std::make_unique<Monotone>(Strategy {0, 0, 1});
+        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{1, 0, 0});
+
         std::stringstream output_file;
         output_file << "experiment_" << i << ".txt";
 
         // Run the test and store the output in the output file
-        run_test(output_file.str(), 1000000, game, agent_x, agent_y);
+        run_test(output_file.str(), 2000000, game, agent_x, agent_y);
     }
 
     return 0;

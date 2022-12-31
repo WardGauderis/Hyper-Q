@@ -6,25 +6,17 @@
 #include <algorithm>
 #include <cassert>
 #include <limits>
-#include <numeric>
 #include <cmath>
 
 HyperQ::HyperQ(std::unique_ptr<StrategyEstimation> estimation, float alpha, float gamma) : estimation(
-        std::move(estimation)), alpha(alpha), gamma(gamma) {}
+        std::move(estimation)), alpha(alpha), gamma(gamma) {
+    std::fill(hyper_q_table.begin(), hyper_q_table.end(), 0);
+}
 
 
 std::pair<Action, Strategy> HyperQ::act() {
     auto x = greedy().first;
-
-    auto random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-    for (unsigned int i = 0; i < x.size(); i++) {
-        if (random < x[i]) {
-            return {i, x};
-        }
-        random -= x[i];
-    }
-
-    return {2, x};
+    return {strategy_to_action(x), x};
 }
 
 void HyperQ::observe(Reward r, Strategy x, Action action_y, Strategy true_y) {

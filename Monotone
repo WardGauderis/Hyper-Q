@@ -1,0 +1,26 @@
+//
+// Created by ward on 12/31/22.
+//
+
+#ifndef HYPER_Q_MONOTONE_
+#define HYPER_Q_MONOTONE_
+
+#include "Agent.h"
+
+class Monotone : public Agent {
+public:
+    explicit Monotone(const Strategy &strategy) : strategy(strategy) {}
+
+    std::pair<Action, Strategy> act() override {
+
+        return {strategy_to_action(strategy), strategy};
+    }
+
+    void observe(Reward r, Strategy x, Action action_y, Strategy y_true) override {}
+
+private:
+    Strategy strategy;
+
+};
+
+#endif //HYPER_Q_MONOTONE_
