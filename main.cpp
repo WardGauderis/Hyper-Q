@@ -10,6 +10,7 @@
 
 #include <fstream>
 #include <memory>
+#include <sstream>
 
 std::pair<Action, Strategy> random_action() {
     auto action = static_cast<Action>(rand() % 3);
@@ -48,6 +49,26 @@ void run_test(const std::string &output_file,
     }
 }
 
+//int main() {
+//    std::unique_ptr<Game> game = std::make_unique<RockPaperScissors>();
+//
+//    auto gamma = 0.9;
+//    auto alpha = 0.01;
+//    auto mu = 0.005;
+//
+////    std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+////    std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+//
+//    std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+//    std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+//
+//    run_test("C:\\GitHub\\Hyper-Q\\results analysis\\results\\output_EMA_vs_fixed.txt", 1000000, game, agent_x, agent_y);
+//
+//
+//    return 0;
+//}
+
+
 int main() {
     std::unique_ptr<Game> game = std::make_unique<RockPaperScissors>();
 
@@ -55,11 +76,21 @@ int main() {
     auto alpha = 0.01;
     auto mu = 0.005;
 
-//    std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-//    std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-    std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-    std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+    for (int i = 0; i < 5; i++) {
+        //        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+        //        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
 
-    run_test("output.txt", 1000000, game, agent_x, agent_y);
+        // Create new instances of the agents for each experiment
+        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+
+        // Generate the output file name using string formatting
+        std::stringstream output_file;
+        output_file << "C:\\GitHub\\Hyper-Q\\results analysis\\results\\EMA_vs_EMA\\experiment_" << i << ".txt";
+
+        // Run the test and store the output in the output file
+        run_test(output_file.str(), 1000000, game, agent_x, agent_y);
+    }
+
     return 0;
 }
