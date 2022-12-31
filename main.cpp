@@ -42,7 +42,7 @@ void run_test(const std::string &output_file,
         agent_x->observe(reward_x, strategy_x, action_y, strategy_y);
         agent_y->observe(reward_y, strategy_y, action_x, strategy_x);
 
-        if ((i - 1) % 100000 == 0) {
+        if (i % 100000 == 0) {
             std::cout << "Step " << i << std::endl;
         }
     }
