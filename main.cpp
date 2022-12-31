@@ -26,6 +26,9 @@ void run_test(const std::string &output_file,
     output.open(output_file);
 
     for (unsigned int i = 0; i < steps; i++) {
+        if (i % 100000 == 0) {
+            std::cout << "Step " << i << std::endl;
+        }
         Action action_x, action_y;
         Strategy strategy_x, strategy_y;
         if (i % 1000 == 0) {

@@ -10,7 +10,7 @@
 #include "Definitions.h"
 #include <memory>
 
-static const unsigned int grid_size = 5;
+static const unsigned int grid_size = 25;
 static const unsigned int num_strategies = grid_size * grid_size;
 static const unsigned int num_pairs = num_strategies * num_strategies;
 

@@ -11,7 +11,7 @@ class Agent {
 public:
     virtual std::pair<Action , Strategy> act() = 0;
 
-    virtual void observe(Reward r, Strategy x, Action action_y, Strategy y) = 0;
+    virtual void observe(Reward r, Strategy x, Action action_y, Strategy y_true) = 0;
 
     virtual ~Agent() = default;
 };
