@@ -8,7 +8,6 @@ import os
 # # Create an empty list to store the data from each file
 # all_data = []
 
-max_file_count = 20
 
 # file_count = 0
 # # Iterate over the files in the target directory
@@ -48,8 +47,8 @@ def load_experiment_data(target_dir = "results/EMA vs monotone"):
     # Iterate over the files in the target directory
     for file_count, filename in enumerate(os.listdir(target_dir)):
         print(file_count)
-        if file_count == max_file_count:
-            break
+        # if file_count == max_file_count:
+        #     break
         
 
         # Construct the full file path
