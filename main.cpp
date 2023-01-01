@@ -58,7 +58,8 @@ int extension() {
     auto alpha = 0.01;
     auto mu = 0.005;
 
-    auto experiments = 1;
+    auto experiments = 20;
+    auto steps = 1500000;
 
     // EMA vs EMA: COOP
     for (int i = 0; i < experiments; i++) {
@@ -73,7 +74,7 @@ int extension() {
                     << ".txt";
 
         // Run the test and store the output in the output file
-        run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+        run_test(output_file.str(), steps, game, agent_x, agent_y);
     }
 
     // Omniscient vs Omniscient: COOP
@@ -88,7 +89,7 @@ int extension() {
                     << ".txt";
 
         // Run the test and store the output in the output file
-        run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+        run_test(output_file.str(), steps, game, agent_x, agent_y);
     }
 
 }
@@ -105,13 +106,14 @@ int main() {
     auto epsilon = 0.01;
     auto step_size = 0.1;
 
-    auto experiments = 1;
+    auto experiments = 20;
+    auto steps = 1500000;
 
     //std::unique_ptr<Agent> agent_phc = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
     //std::unique_ptr<Agent> agent_iga = std::make_unique<IGA>(step_size);
 
 
-    if (true) {
+    if (false) {
         // Omniscient vs monotone
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(time(nullptr)));
@@ -124,11 +126,11 @@ int main() {
                         << ".txt";
 
             // Run the test and store the output in the output file
-            run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
         }
     }
 
-    if (true) {
+    if (false) {
         // EMA vs monotone
         for (int i = 0; i < experiments; i++) {
 
@@ -142,12 +144,12 @@ int main() {
                         << ".txt";
 
             // Run the test and store the output in the output file
-            run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
 
         }
     }
 
-    if (true) {
+    if (false) {
         // PHC vs monotone
         for (int i = 0; i < experiments; i++) {
 
@@ -161,12 +163,12 @@ int main() {
                         << ".txt";
 
             // Run the test and store the output in the output file
-            run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
 
         }
     }
 
-    if (true) {
+    if (false) {
         // IGA vs monotone
         for (int i = 0; i < experiments; i++) {
 
@@ -180,7 +182,7 @@ int main() {
                         << ".txt";
 
             // Run the test and store the output in the output file
-            run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
 
         }
     }
