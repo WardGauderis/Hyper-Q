@@ -47,6 +47,7 @@ void run_test(const std::string &output_file,
     }
 }
 
+
 int main() {
 
     std::unique_ptr<Game> game = std::make_unique<RockPaperScissors>();
@@ -55,23 +56,40 @@ int main() {
     auto alpha = 0.01;
     auto mu = 0.005;
 
-    auto iterations = 100;
+    auto experiments = 20;
 
-    for (int i = 0; i < iterations; i++) {
-        srand(i);
+    {
+        // Omniscient vs monotone
+        for (int i = 0; i < experiments; i++) {
+            srand(i);
+            std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 
-        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+            std::stringstream output_file;
+            output_file << R"(Omniscient vs monotone\experiment_)" << i
+                        << ".txt";
 
-        //        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-//        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
-
-        std::stringstream output_file;
-        output_file << R"(C:\GitHub\Hyper-Q\results analysis\results\Omniscient vs monotone\experiment_)" << i << ".txt";
-
-        // Run the test and store the output in the output file
-        run_test(output_file.str(), 2000000, game, agent_x, agent_y);
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+        }
     }
+
+    {
+        // EMA vs monotone
+        for (int i = 0; i < experiments; i++) {
+            srand(i);
+            std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
+
+            std::stringstream output_file;
+            output_file << R"(EMA vs monotone\experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+        }
+    }
+
 
     return 0;
 }
