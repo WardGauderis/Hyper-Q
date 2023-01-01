@@ -13,6 +13,7 @@ public:
     EMA(double mu) : mu(mu) {}
 
     void observe(Action action_y, Strategy true_y) override {
+        (void)true_y;
         for (unsigned int i = 0; i < strategy.size(); i++) {
             strategy[i] = (1 - mu) * strategy[i] + mu * static_cast<double >(action_y == i);
         }

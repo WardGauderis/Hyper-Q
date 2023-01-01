@@ -10,6 +10,7 @@
 class Omniscient : public StrategyEstimation {
 public:
     void observe(Action action_y, Strategy true_y) override {
+        (void)action_y;
         strategy = true_y;
     }
 

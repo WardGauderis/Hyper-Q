@@ -27,6 +27,7 @@ public:
     }
 
     void observe(Reward r, Strategy x, Action action_y, Strategy true_y) {
+        (void)true_y;
         auto x_index = strategy_to_index(x);
 
         update_posterior(action_y);
