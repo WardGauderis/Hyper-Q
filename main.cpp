@@ -8,6 +8,8 @@
 #include "Bayesian.h"
 #include "Omniscient.h"
 #include "Monotone"
+#include "PHC.h"
+#include "IGA.h"
 
 #include <fstream>
 #include <memory>
@@ -54,17 +56,25 @@ int main() {
     auto gamma = 0.9;
     auto alpha = 0.01;
     auto mu = 0.005;
+    auto delta = 0.01;
+    auto epsilon = 0.01;
+    auto step_size = 0.1;
 
-    auto iterations = 100;
 
-    for (int i = 0; i < iterations; i++) {
+    unsigned int iterations = 100;
+
+    for (unsigned int i = 0; i < iterations; i++) {
         srand(i);
 
         std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
         std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
 
-        //        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-//        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
+//      std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+//      std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
+
+        std::unique_ptr<Agent> agent_phc = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
+        std::unique_ptr<Agent> agent_iga = std::make_unique<IGA>(step_size);
+
 
         std::stringstream output_file;
         output_file << R"(C:\GitHub\Hyper-Q\results analysis\results\Omniscient vs monotone\experiment_)" << i << ".txt";
