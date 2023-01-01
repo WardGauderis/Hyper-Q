@@ -98,6 +98,9 @@ plot_average_reward_over_time(experiment_data1, title="EMA vs Monotone", agent1_
 plot_average_reward_over_time(experiment_data1, title="EMA vs Monotone", agent1_name="EMA", agent2_name="Monotone",
                               steps=6_000)
 
+plot_average_reward_over_time(experiment_data1, title="EMA vs Monotone", agent1_name="EMA", agent2_name="Monotone",
+                              steps=30_000)
+
 plot_average_reward_over_time(
     experiment_data1, title="EMA vs Monotone", agent1_name="EMA", agent2_name="Monotone")
 
@@ -120,3 +123,5 @@ plot_average_reward_over_time(
     experiment_data2, title="Omniscient vs Monotone", agent1_name="Omniscient", agent2_name="Monotone")
 
 
+
+# %%
