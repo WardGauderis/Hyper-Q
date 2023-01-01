@@ -15,6 +15,7 @@
 #include <fstream>
 #include <memory>
 
+
 std::string ROOT = R"(C:\GitHub\Hyper-Q\results analysis\results\)";
 
 void run_test(const std::string &output_file,
@@ -57,7 +58,7 @@ int extension() {
     auto alpha = 0.01;
     auto mu = 0.005;
 
-    auto experiments = 20;
+    auto experiments = 1;
 
     // EMA vs EMA: COOP
     for (int i = 0; i < experiments; i++) {
@@ -104,7 +105,7 @@ int main() {
     auto epsilon = 0.01;
     auto step_size = 0.1;
 
-    auto experiments = 20;
+    auto experiments = 1;
 
     //std::unique_ptr<Agent> agent_phc = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
     //std::unique_ptr<Agent> agent_iga = std::make_unique<IGA>(step_size);
@@ -138,6 +139,44 @@ int main() {
             std::stringstream output_file;
             output_file << ROOT
                         << R"(EMA vs monotone\experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+
+        }
+    }
+
+    if (true) {
+        // PHC vs monotone
+        for (int i = 0; i < experiments; i++) {
+
+            srand(static_cast<unsigned int>(time(nullptr)));
+            std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+            std::unique_ptr<Agent> agent_y = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
+
+            std::stringstream output_file;
+            output_file << ROOT
+                        << R"(PHC vs monotone\experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+
+        }
+    }
+
+    if (true) {
+        // IGA vs monotone
+        for (int i = 0; i < experiments; i++) {
+
+            srand(static_cast<unsigned int>(time(nullptr)));
+            std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+            std::unique_ptr<Agent> agent_y = std::make_unique<IGA>(step_size);
+
+            std::stringstream output_file;
+            output_file << ROOT
+                        << R"(IGA vs monotone\experiment_)" << i
                         << ".txt";
 
             // Run the test and store the output in the output file
