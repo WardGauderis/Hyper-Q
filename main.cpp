@@ -4,15 +4,18 @@
 #include "Agent.h"
 #include "RockPaperScissors.h"
 #include "HyperQ.h"
+#include "BayesianHyperQ.h"
 #include "EMA.h"
-#include "Bayesian.h"
 #include "Omniscient.h"
 #include "Monotone"
+#include "PHC.h"
+#include "IGA.h"
 #include "CooperationGame.h"
 
 #include <fstream>
 #include <memory>
-#include <sstream>
+
+std::string ROOT = R"(C:\GitHub\Hyper-Q\results analysis\results\)";
 
 void run_test(const std::string &output_file,
               const unsigned int steps,
@@ -54,7 +57,7 @@ int extension() {
     auto alpha = 0.01;
     auto mu = 0.005;
 
-    auto experiments = 1;
+    auto experiments = 20;
 
     // EMA vs EMA: COOP
     for (int i = 0; i < experiments; i++) {
@@ -64,7 +67,8 @@ int extension() {
 
 
         std::stringstream output_file;
-        output_file << R"(C:\GitHub\Hyper-Q\results analysis\results\cooperation\EMA vs EMA\experiment_)" << i
+        output_file << ROOT
+                    << R"(cooperation\EMA vs EMA\experiment_)" << i
                     << ".txt";
 
         // Run the test and store the output in the output file
@@ -78,7 +82,8 @@ int extension() {
         std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
 
         std::stringstream output_file;
-        output_file << R"(C:\GitHub\Hyper-Q\results analysis\results\cooperation\Omniscient vs Omniscient\experiment_)" << i
+        output_file << ROOT << R"(cooperation\Omniscient vs Omniscient\experiment_)"
+                    << i
                     << ".txt";
 
         // Run the test and store the output in the output file
@@ -86,7 +91,6 @@ int extension() {
     }
 
 }
-
 
 int main() {
 
@@ -96,17 +100,26 @@ int main() {
     auto alpha = 0.01;
     auto mu = 0.005;
 
+    auto delta = 0.01;
+    auto epsilon = 0.01;
+    auto step_size = 0.1;
+
     auto experiments = 20;
 
-    if (false) {
+    //std::unique_ptr<Agent> agent_phc = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
+    //std::unique_ptr<Agent> agent_iga = std::make_unique<IGA>(step_size);
+
+
+    if (true) {
         // Omniscient vs monotone
         for (int i = 0; i < experiments; i++) {
-            srand(i);
+            srand(static_cast<unsigned int>(time(nullptr)));
             std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
             std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 
             std::stringstream output_file;
-            output_file << R"(Omniscient vs monotone\experiment_)" << i
+            output_file << ROOT
+                        << R"(Omniscient vs monotone\experiment_)" << i
                         << ".txt";
 
             // Run the test and store the output in the output file
@@ -114,19 +127,22 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // EMA vs monotone
         for (int i = 0; i < experiments; i++) {
-            srand(i);
+
+            srand(static_cast<unsigned int>(time(nullptr)));
             std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
             std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 
             std::stringstream output_file;
-            output_file << R"(EMA vs monotone\experiment_)" << i
+            output_file << ROOT
+                        << R"(EMA vs monotone\experiment_)" << i
                         << ".txt";
 
             // Run the test and store the output in the output file
             run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+
         }
     }
 

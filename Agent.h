@@ -6,8 +6,10 @@
 #define HYPER_Q_AGENT_H
 
 #include "Definitions.h"
-#include <cstdlib>
-#include <numeric>
+
+static const unsigned int grid_size = 25;
+static const unsigned int num_strategies = grid_size * grid_size;
+static const unsigned int num_pairs = num_strategies * num_strategies;
 
 class Agent {
 public:
@@ -17,30 +19,18 @@ public:
 
     virtual ~Agent() = default;
 
-    static std::pair<Action, Strategy> random_restart() {
-        Strategy strategy;
-        for (auto &i: strategy) {
-            i = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-        }
-        auto sum = std::accumulate(strategy.begin(), strategy.end(), 0.0f);
-        for (auto &i: strategy) {
-            i /= sum;
-        }
-        return {strategy_to_action(strategy), strategy};
-    }
+    static std::pair<Action, Strategy> random_restart();
 
 protected:
-    static Action strategy_to_action(Strategy strategy) {
-        auto random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-        for (unsigned int i = 0; i < strategy.size(); i++) {
-            if (random < strategy[i]) {
-                return i;
-            }
-            random -= strategy[i];
-        }
+    static Action strategy_to_action(Strategy strategy);
 
-        return strategy.size() - 1;
-    }
+    static Strategy index_to_strategy(StrategyIndex index);
+
+    static StrategyIndex strategy_to_index(Strategy strategy);
+
+    static StrategiesIndex strategies_to_index(Strategies strategies);
+
+    static bool valid_index(StrategyIndex index);
 };
 
 

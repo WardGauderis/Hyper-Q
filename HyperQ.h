@@ -9,34 +9,60 @@
 #include "StrategyEstimation.h"
 #include "Definitions.h"
 #include <memory>
-
-static const unsigned int grid_size = 25;
-static const unsigned int num_strategies = grid_size * grid_size;
-static const unsigned int num_pairs = num_strategies * num_strategies;
+#include <limits>
 
 
 class HyperQ : public Agent {
 public:
-    HyperQ(std::unique_ptr<StrategyEstimation> estimation, float alpha, float gamma);
+    HyperQ(std::unique_ptr<StrategyEstimation> estimation, double alpha, double gamma) : estimation(
+            std::move(estimation)), alpha(alpha), gamma(gamma) {
+        std::fill(hyper_q_table.begin(), hyper_q_table.end(), 0);
+    }
 
-    std::pair<Action, Strategy> act() override;
+    std::pair<Action, Strategy> act() override {
+        auto x = greedy().first;
+        return {strategy_to_action(x), x};
+    }
 
-    void observe(Reward r, Strategy x, Action action_y, Strategy y) override;
+    void observe(Reward r, Strategy x, Action action_y, Strategy true_y) override {
+        auto y = estimation->estimate();
+
+        auto x_index = strategy_to_index(x);
+        auto y_index = strategy_to_index(y);
+
+        auto index = strategies_to_index({x_index, y_index});
+
+        estimation->observe(action_y, true_y);
+
+        auto max = greedy().second;
+        hyper_q_table[index] += alpha * (r + gamma * max - hyper_q_table[index]);
+    }
+
 private:
     std::array<Reward, num_pairs> hyper_q_table{};
     std::unique_ptr<StrategyEstimation> estimation;
-    float alpha;
-    float gamma;
+    double alpha;
+    double gamma;
 
-    std::pair<Strategy , Reward> greedy();
+    std::pair<Strategy, Reward> greedy() {
+        auto y = estimation->estimate();
+        auto y_index = strategy_to_index(y);
 
-    static Strategy index_to_strategy(StrategyIndex index);
+        auto max = std::numeric_limits<double>::lowest();
+        StrategyIndex max_x = 0;
 
-    static StrategyIndex strategy_to_index(Strategy strategy);
+        for (StrategyIndex x = 0; x < num_strategies; ++x) {
+            if (!valid_index(x)) continue;
 
-    static StrategiesIndex strategies_to_index(Strategies strategies);
+            const auto index = strategies_to_index({x, y_index});
+            if (hyper_q_table[index] > max) {
+                max = hyper_q_table[index];
+                max_x = x;
+            }
+        }
 
-    bool valid_index(StrategyIndex index);
+        return {index_to_strategy(max_x), max};
+    }
 };
 
 #endif //HYPER_Q_HYPERQ_H
