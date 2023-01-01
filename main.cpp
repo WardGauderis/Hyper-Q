@@ -4,8 +4,8 @@
 #include "Agent.h"
 #include "RockPaperScissors.h"
 #include "HyperQ.h"
+#include "BayesianHyperQ.h"
 #include "EMA.h"
-#include "Bayesian.h"
 #include "Omniscient.h"
 #include "Monotone"
 #include "PHC.h"
@@ -13,7 +13,6 @@
 
 #include <fstream>
 #include <memory>
-#include <sstream>
 
 void run_test(const std::string &output_file,
               const unsigned int steps,
@@ -43,7 +42,7 @@ void run_test(const std::string &output_file,
         agent_x->observe(reward_x, strategy_x, action_y, strategy_y);
         agent_y->observe(reward_y, strategy_y, action_x, strategy_x);
 
-        if (i % 100000 == 0) {
+        if (i % 1000 == 0) {
             std::cout << "Step " << i << std::endl;
         }
     }
@@ -60,28 +59,40 @@ int main() {
     auto epsilon = 0.01;
     auto step_size = 0.1;
 
+    auto experiments = 20;
 
-    unsigned int iterations = 100;
+    {
+        // Omniscient vs monotone
+        for (int i = 0; i < experiments; i++) {
+            srand(i);
+            std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 
-    for (unsigned int i = 0; i < iterations; i++) {
-        srand(i);
+            std::stringstream output_file;
+            output_file << R"(Omniscient vs monotone\experiment_)" << i
+                        << ".txt";
 
-        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-
-//      std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-//      std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
-
-        std::unique_ptr<Agent> agent_phc = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
-        std::unique_ptr<Agent> agent_iga = std::make_unique<IGA>(step_size);
-
-
-        std::stringstream output_file;
-        output_file << R"(C:\GitHub\Hyper-Q\results analysis\results\Omniscient vs monotone\experiment_)" << i << ".txt";
-
-        // Run the test and store the output in the output file
-        run_test(output_file.str(), 2000000, game, agent_x, agent_y);
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+        }
     }
+
+    {
+        // EMA vs monotone
+        for (int i = 0; i < experiments; i++) {
+            srand(i);
+            std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
+
+            std::stringstream output_file;
+            output_file << R"(EMA vs monotone\experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), 1500000, game, agent_x, agent_y);
+        }
+    }
+
 
     return 0;
 }
