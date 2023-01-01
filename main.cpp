@@ -4,14 +4,13 @@
 #include "Agent.h"
 #include "RockPaperScissors.h"
 #include "HyperQ.h"
+#include "BayesianHyperQ.h"
 #include "EMA.h"
-#include "Bayesian.h"
 #include "Omniscient.h"
 #include "Monotone"
 
 #include <fstream>
 #include <memory>
-#include <sstream>
 
 void run_test(const std::string &output_file,
               const unsigned int steps,
@@ -41,12 +40,11 @@ void run_test(const std::string &output_file,
         agent_x->observe(reward_x, strategy_x, action_y, strategy_y);
         agent_y->observe(reward_y, strategy_y, action_x, strategy_x);
 
-        if (i % 100000 == 0) {
+        if (i % 1000 == 0) {
             std::cout << "Step " << i << std::endl;
         }
     }
 }
-
 
 int main() {
 

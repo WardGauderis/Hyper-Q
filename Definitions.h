@@ -9,11 +9,11 @@
 
 using Action = unsigned int;
 
-using Reward = float;
+using Reward = double;
 
 using Rewards = std::array<Reward, 2>;
 
-using Probability = float;
+using Probability = double;
 
 using Strategy = std::array<Probability, 3>;
 

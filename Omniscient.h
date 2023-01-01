@@ -18,7 +18,7 @@ public:
     }
 
 private:
-    Strategy strategy = {1.0f / 3.0f, 1.0f / 3.0f, 1.0f / 3.0f};
+    Strategy strategy = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
 };
 
 

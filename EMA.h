@@ -10,11 +10,11 @@
 
 class EMA : public StrategyEstimation {
 public:
-    EMA(float mu) : mu(mu) {}
+    EMA(double mu) : mu(mu) {}
 
     void observe(Action action_y, Strategy true_y) override {
         for (unsigned int i = 0; i < strategy.size(); i++) {
-            strategy[i] = (1 - mu) * strategy[i] + mu * static_cast<float>(action_y == i);
+            strategy[i] = (1 - mu) * strategy[i] + mu * static_cast<double >(action_y == i);
         }
     }
 
@@ -23,8 +23,8 @@ public:
     }
 
 private:
-    float mu;
-    Strategy strategy = {1.0f / 3.0f, 1.0f / 3.0f, 1.0f / 3.0f};
+    double mu;
+    Strategy strategy = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
 };
 
 
