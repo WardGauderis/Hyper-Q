@@ -21,7 +21,6 @@ void run_test(const std::string &output_file,
     std::ofstream output;
     output.open(output_file);
 
-    srand(0);
 
     for (unsigned int i = 0; i < steps; i++) {
         Action action_x, action_y;
@@ -49,26 +48,26 @@ void run_test(const std::string &output_file,
 }
 
 int main() {
+
     std::unique_ptr<Game> game = std::make_unique<RockPaperScissors>();
 
     auto gamma = 0.9;
     auto alpha = 0.01;
     auto mu = 0.005;
 
-    auto iterations = 1;
+    auto iterations = 100;
 
     for (int i = 0; i < iterations; i++) {
-//        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-//        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+        srand(i);
 
-        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-//        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
 
-//        std::unique_ptr<Agent> agent_x = std::make_unique<Monotone>(Strategy {0, 0, 1});
-        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{1, 0, 0});
+        //        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+//        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 
         std::stringstream output_file;
-        output_file << "experiment_" << i << ".txt";
+        output_file << R"(C:\GitHub\Hyper-Q\results analysis\results\Omniscient vs monotone\experiment_)" << i << ".txt";
 
         // Run the test and store the output in the output file
         run_test(output_file.str(), 2000000, game, agent_x, agent_y);
