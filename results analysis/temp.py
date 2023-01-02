@@ -125,3 +125,17 @@ plot_average_reward_over_time(
 
 
 # %%
+
+# ************** COOPERATION GAME # ************
+# %%
+
+# experiment_coop_data = #load_experiment_data(target_dir="results/cooperation/EMA vs EMA/")
+experiment_coop_data = load_experiment_data(target_dir="results/Omniscient vs monotone")
+
+plot_average_reward_over_time(experiment_data1, title="EMA vs Monotone", agent1_name="EMA", agent2_name="Monotone", steps=50)
+
+plot_average_reward_over_time(experiment_data1, title="EMA vs Monotone", agent1_name="EMA", agent2_name="Monotone", steps=6_000)
+
+plot_average_reward_over_time(experiment_data1, title="EMA vs Monotone", agent1_name="EMA", agent2_name="Monotone", steps=30_000)
+
+plot_average_reward_over_time(experiment_data1, title="EMA vs Monotone", agent1_name="EMA", agent2_name="Monotone")
