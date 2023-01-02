@@ -14,9 +14,11 @@
 
 #include <fstream>
 #include <memory>
+#include <sys/stat.h>
 
 
-std::string ROOT = R"(C:\GitHub\Hyper-Q\results analysis\results\)";
+
+std::string ROOT = R"(./results analysis/results/)";
 
 void run_test(const std::string &output_file,
               const unsigned int steps,
@@ -47,7 +49,6 @@ void run_test(const std::string &output_file,
         agent_x->observe(reward_x, strategy_x, action_y, strategy_y);
         agent_y->observe(reward_y, strategy_y, action_x, strategy_x);
 
-        std::cout << "Step " << strategy_x[0] << strategy_x[1] << strategy_x[2] << std::endl;
         if (i % 100000 == 0) {
             std::cout << "Step " << i << std::endl;
             //std::cout << "Step " << strategy_x[0] << strategy_x[1] << strategy_x[2] << std::endl;
@@ -130,16 +131,79 @@ int main() {
 
     auto delta = 0.01;
     auto epsilon = 0.01;
-    auto step_size = 0.1;
+    auto step_size = 0.01;
 
     auto experiments = 20;
-    auto steps = 1500000;
+    auto steps = 600000;
 
     //std::unique_ptr<Agent> agent_phc = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
     //std::unique_ptr<Agent> agent_iga = std::make_unique<IGA>(step_size);
 
 
-    if (false) {
+    if (true) {
+        // Bayesian vs monotone
+        for (int i = 0; i < experiments; i++) {
+
+            srand(static_cast<unsigned int>(time(nullptr)));
+            std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
+
+            std::stringstream output_file;
+            int result = mkdir("./results analysis/results/Bayesian vs monotone", 0777);  // fix: use 0777 instead of 777
+            output_file << ROOT
+                        << R"(Bayesian vs monotone/experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
+
+        }
+    }
+
+    if (true) {
+        // IGA vs Bayesian Hyper-Q
+        for (int i = 0; i < experiments; i++) {
+
+            srand(static_cast<unsigned int>(time(nullptr)));
+            std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
+            std::unique_ptr<Agent> agent_y = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+
+
+            std::stringstream output_file;
+            int result = mkdir("./results analysis/results/IGA vs Bayesian", 0777);  // fix: use 0777 instead of 777
+            output_file << ROOT
+                        << R"(IGA vs Bayesian/experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
+
+        }
+    }
+
+    if (true) {
+        // PHC vs Bayesian Hyper-Q
+        for (int i = 0; i < experiments; i++) {
+
+            srand(static_cast<unsigned int>(time(nullptr)));
+            std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
+            std::unique_ptr<Agent> agent_y = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+
+
+            std::stringstream output_file;
+            int result = mkdir("./results analysis/results/PHC vs Bayesian", 0777);
+            output_file << ROOT
+                        << R"(PHC vs Bayesian/experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
+
+        }
+    }
+
+    
+    if (true) {
         // Omniscient vs monotone
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(time(nullptr)));
@@ -147,8 +211,9 @@ int main() {
             std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 
             std::stringstream output_file;
+            int result = mkdir("./results analysis/results/Omniscient vs monotone", 0777);  // fix: use 0777 instead of 777
             output_file << ROOT
-                        << R"(Omniscient vs monotone\experiment_)" << i
+                        << R"(Omniscient vs monotone/experiment_)" << i
                         << ".txt";
 
             // Run the test and store the output in the output file
@@ -156,7 +221,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // EMA vs monotone
         for (int i = 0; i < experiments; i++) {
 
@@ -165,8 +230,9 @@ int main() {
             std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 
             std::stringstream output_file;
+            int result = mkdir("./results analysis/results/EMA vs monotone", 0777);  // fix: use 0777 instead of 777
             output_file << ROOT
-                        << R"(EMA vs monotone\experiment_)" << i
+                        << R"(EMA vs monotone/experiment_)" << i
                         << ".txt";
 
             // Run the test and store the output in the output file
@@ -185,8 +251,9 @@ int main() {
 
 
             std::stringstream output_file;
+            int result = mkdir("./results analysis/results/PHC vs monotone", 0777);
             output_file << ROOT
-                        << R"(PHC vs monotone\experiment_)" << i
+                        << R"(PHC vs monotone/experiment_)" << i
                         << ".txt";
 
             // Run the test and store the output in the output file
@@ -195,7 +262,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // IGA vs monotone
         for (int i = 0; i < experiments; i++) {
 
@@ -205,8 +272,9 @@ int main() {
 
 
             std::stringstream output_file;
+            int result = mkdir("./results analysis/results/IGA vs monotone", 0777);
             output_file << ROOT
-                        << R"(IGA vs monotone\experiment_)" << i
+                        << R"(IGA vs monotone/experiment_)" << i
                         << ".txt";
 
             // Run the test and store the output in the output file

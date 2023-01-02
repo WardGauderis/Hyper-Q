@@ -11,8 +11,14 @@
 
 IGA::IGA(float step_size_) {
     step_size = step_size_;
+
+    srand(static_cast<unsigned int>(time(nullptr))); 
     policy[0] = static_cast<float>(rand()) / RAND_MAX;
+
+    srand(static_cast<unsigned int>(time(nullptr))); 
     policy[1] = static_cast<float>(rand()) / RAND_MAX;
+
+    srand(static_cast<unsigned int>(time(nullptr))); 
     policy[2] = static_cast<float>(rand()) / RAND_MAX;
 
     // normalize

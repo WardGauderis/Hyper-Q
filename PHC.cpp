@@ -15,15 +15,25 @@ PHC::PHC(float alpha_, float delta_, float gamma_, float epsilon_) {
     for (int state=0; state<9; state++) {
         for (int action=0; action<3; action++) {
             if (action==0) {
-                q_table[state][action] = 1;
+                q_table[state][action] = 0.1;
             } else {
-                q_table[state][action] = 0;
+                q_table[state][action] = 0.1;
             }
         }
     }
 
     for (int state=0; state<9; state++) {
-        policy_table[state] = {1,0,0};
+        // probabilities
+        srand(static_cast<unsigned int>(time(nullptr))); 
+        float p1 = static_cast<float>(rand()) / RAND_MAX;
+        srand(static_cast<unsigned int>(time(nullptr))); 
+        float p2 = static_cast<float>(rand()) / RAND_MAX;
+        srand(static_cast<unsigned int>(time(nullptr))); 
+        float p3 = static_cast<float>(rand()) / RAND_MAX;
+
+        float sum = p1+p2+p3;
+
+        policy_table[state] = {p1/sum,p2/sum,p3/sum};
     }
 }
 
