@@ -2,12 +2,26 @@
 #include "RockPaperScissors.h"
 #include <algorithm>
 #include <numeric>
+#include <fstream>
+#include <memory>
+#include <iostream>
+
+// https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=Nash+Convergence+of+Gradient+Dynamics+in+General-Sum+Games.&btnG=
+
 
 IGA::IGA(float step_size_) {
     step_size = step_size_;
-    policy[0] = 1;
-    policy[0] = 0;
-    policy[0] = 0;
+    policy[0] = static_cast<float>(rand()) / RAND_MAX;
+    policy[1] = static_cast<float>(rand()) / RAND_MAX;
+    policy[2] = static_cast<float>(rand()) / RAND_MAX;
+
+    // normalize
+    float sum = 0;
+    sum = policy[0] + policy[1] + policy[2];
+
+    for (unsigned long i=0; i<3; i++) {
+        policy[i] = static_cast<float>(policy[i])/sum;
+    }
 }
 
 // returns greedy action according to policy.
@@ -67,6 +81,12 @@ void IGA::observe(Reward r, Strategy x, Action action_y, Strategy true_y) {
     policy[0] += step_size * d_p0;
     policy[1] += step_size * d_p1;
     policy[2] += step_size * d_p2;
+
+    // probability boundaries
+    for (unsigned long i = 0; i < 3; i++) {
+        if (policy[i] < 0.0) { policy[i] = 0.0; }
+        if (policy[i] > 1.0) { policy[i] = 1.0; }
+    }
 
     // normalize policy
     float sum = 0;

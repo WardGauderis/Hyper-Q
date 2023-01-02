@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <numeric>
 
+// http://www.cs.cmu.edu/~mmv/papers/01ijcai-mike.pdf
+
 PHC::PHC(float alpha_, float delta_, float gamma_, float epsilon_) {
     alpha = alpha_;
     delta = delta_;

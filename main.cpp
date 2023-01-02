@@ -47,9 +47,10 @@ void run_test(const std::string &output_file,
         agent_x->observe(reward_x, strategy_x, action_y, strategy_y);
         agent_y->observe(reward_y, strategy_y, action_x, strategy_x);
 
+        std::cout << "Step " << strategy_x[0] << strategy_x[1] << strategy_x[2] << std::endl;
         if (i % 100000 == 0) {
             std::cout << "Step " << i << std::endl;
-//            std::cout << "Step " << strategy_x[0] << strategy_x[1] << strategy_x[2] << std::endl;
+            //std::cout << "Step " << strategy_x[0] << strategy_x[1] << strategy_x[2] << std::endl;
         }
     }
 }
@@ -138,7 +139,7 @@ int main() {
     //std::unique_ptr<Agent> agent_iga = std::make_unique<IGA>(step_size);
 
 
-    if (true) {
+    if (false) {
         // Omniscient vs monotone
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(time(nullptr)));
@@ -155,7 +156,7 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // EMA vs monotone
         for (int i = 0; i < experiments; i++) {
 
@@ -194,13 +195,13 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // IGA vs monotone
         for (int i = 0; i < experiments; i++) {
 
             srand(static_cast<unsigned int>(time(nullptr)));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
-            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
+            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 1, 0});
 
 
             std::stringstream output_file;
