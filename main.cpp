@@ -141,8 +141,8 @@ int main() {
 
 
     if (true) {
-        // Bayesian vs monotone
-        for (int i = 0; i < experiments; i++) {
+        // Bayesian Hyper-Q vs monotone
+        for (int i = 0; i < 3; i++) {
 
             srand(static_cast<unsigned int>(time(nullptr)));
             std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
@@ -205,7 +205,7 @@ int main() {
     
     if (true) {
         // Omniscient vs monotone
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(time(nullptr)));
             std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
             std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
