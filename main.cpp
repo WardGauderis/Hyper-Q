@@ -162,7 +162,7 @@ int main() {
 
     if (true) {
         // IGA vs Bayesian Hyper-Q
-        for (int i = 0; i < experiments; i++) {
+        for (int i = 0; i < 3; i++) {
 
             srand(static_cast<unsigned int>(time(nullptr)));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
@@ -183,7 +183,7 @@ int main() {
 
     if (true) {
         // PHC vs Bayesian Hyper-Q
-        for (int i = 0; i < experiments; i++) {
+        for (int i = 0; i < 3; i++) {
 
             srand(static_cast<unsigned int>(time(nullptr)));
             std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
@@ -205,7 +205,7 @@ int main() {
     
     if (true) {
         // Omniscient vs monotone
-        for (int i = 0; i < experiments; i++) {
+        for (int i = 0; i < 3; i++) {
             srand(static_cast<unsigned int>(time(nullptr)));
             std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
             std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
