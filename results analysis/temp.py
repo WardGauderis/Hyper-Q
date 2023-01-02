@@ -32,8 +32,8 @@ def load_experiment_data(target_dir="results/EMA vs monotone"):
                     columns = line.strip().split()
 
                     # Convert the columns to integers and append them to the file data
-                    file_data.append(np.array([int(c)
-                                     for c in columns], dtype=int))
+                    file_data.append(np.array([c
+                                     for c in columns], dtype=float))
 
             # Convert the data from the current file to an ndarray
             file_data = np.array(file_data)
@@ -126,13 +126,12 @@ plot_average_reward_over_time(
 
 # %%
 
-# ************** COOPERATION GAME # ************
 # %%
+# ************** COOPERATION GAME # ************
 
 # experiment_coop_data = #load_experiment_data(target_dir="results/cooperation/EMA vs EMA/")
-experiment_coop_data = load_experiment_data(target_dir="results/Omniscient vs monotone")
+experiment_coop_data = load_experiment_data(target_dir="results/cooperation/Omniscient vs Omniscient")
 
-plot_average_reward_over_time(experiment_data1, title="EMA vs Monotone", agent1_name="EMA", agent2_name="Monotone", steps=50)
 
 plot_average_reward_over_time(experiment_data1, title="EMA vs Monotone", agent1_name="EMA", agent2_name="Monotone", steps=6_000)
 

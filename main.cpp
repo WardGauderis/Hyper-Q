@@ -40,8 +40,9 @@ void run_test(const std::string &output_file,
 
         auto [reward_x, reward_y] = game->step(action_x, action_y);
 
-        output << action_x << " " << action_y << " " << reward_x << " " << reward_y << strategy_x[0] << strategy_x[1]
-               << strategy_x[2] << strategy_y[0] << strategy_y[1] << strategy_y[2] << "\n";
+        output << action_x << " " << action_y << " " << reward_x << " " << reward_y << " " << strategy_x[0] << " "
+               << strategy_x[1]
+               << " " << strategy_x[2] << " " << strategy_y[0] << " " << strategy_y[1] << " " << strategy_y[2] << "\n";
 
         agent_x->observe(reward_x, strategy_x, action_y, strategy_y);
         agent_y->observe(reward_y, strategy_y, action_x, strategy_x);
@@ -98,6 +99,23 @@ int extension() {
         run_test(output_file.str(), steps, game, agent_x, agent_y);
     }
 
+    // Bayesian vs Bayesian: COOP
+    for (int i = 0; i < experiments; i++) {
+        srand(i);
+
+        std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+        std::unique_ptr<Agent> agent_y = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+
+        std::stringstream output_file;
+        output_file << ROOT
+                    << R"(cooperation\Omniscient vs Omniscient\experiment_)"
+                    << i
+                    << ".txt";
+
+        // Run the test and store the output in the output file
+        run_test(output_file.str(), steps, game, agent_x, agent_y);
+    }
+
     return 0;
 }
 
@@ -120,7 +138,7 @@ int main() {
     //std::unique_ptr<Agent> agent_iga = std::make_unique<IGA>(step_size);
 
 
-    if (true) {
+    if (false) {
         // Omniscient vs monotone
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(time(nullptr)));
@@ -137,7 +155,7 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // EMA vs monotone
         for (int i = 0; i < experiments; i++) {
 
@@ -156,7 +174,7 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // PHC vs monotone
         for (int i = 0; i < experiments; i++) {
 
@@ -175,7 +193,7 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // IGA vs monotone
         for (int i = 0; i < experiments; i++) {
 
