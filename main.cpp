@@ -63,8 +63,8 @@ int extension() {
     auto alpha = 0.01;
     auto mu = 0.005;
 
-    auto experiments = 20;
-    auto steps = 1500000;
+    //auto experiments = 20;
+    //auto steps = 1500000;
 
     // EMA vs EMA: COOP
 //    for (int i = 0; i < experiments; i++) {
@@ -102,7 +102,7 @@ int extension() {
 //    }
 
     // Bayesian vs Bayesian: COOP
-    for (int i = 0; i < 1; i++) {
+    for (unsigned int i = 0; i < 1; i++) {
         srand(i);
 
         std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
@@ -134,7 +134,7 @@ int main() {
     auto step_size = 0.01;
 
     auto experiments = 20;
-    auto steps = 600000;
+    unsigned int steps = 600000;
 
     //std::unique_ptr<Agent> agent_phc = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
     //std::unique_ptr<Agent> agent_iga = std::make_unique<IGA>(step_size);
@@ -149,7 +149,7 @@ int main() {
             std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 
             std::stringstream output_file;
-            int result = mkdir("./results analysis/results/Bayesian vs monotone", 0777);  // fix: use 0777 instead of 777
+            mkdir("./results analysis/results/Bayesian vs monotone", 0777);  // fix: use 0777 instead of 777
             output_file << ROOT
                         << R"(Bayesian vs monotone/experiment_)" << i
                         << ".txt";
@@ -170,7 +170,7 @@ int main() {
 
 
             std::stringstream output_file;
-            int result = mkdir("./results analysis/results/IGA vs Bayesian", 0777);  // fix: use 0777 instead of 777
+            mkdir("./results analysis/results/IGA vs Bayesian", 0777);  // fix: use 0777 instead of 777
             output_file << ROOT
                         << R"(IGA vs Bayesian/experiment_)" << i
                         << ".txt";
@@ -191,7 +191,7 @@ int main() {
 
 
             std::stringstream output_file;
-            int result = mkdir("./results analysis/results/PHC vs Bayesian", 0777);
+            mkdir("./results analysis/results/PHC vs Bayesian", 0777);
             output_file << ROOT
                         << R"(PHC vs Bayesian/experiment_)" << i
                         << ".txt";
@@ -211,7 +211,7 @@ int main() {
             std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 
             std::stringstream output_file;
-            int result = mkdir("./results analysis/results/Omniscient vs monotone", 0777);  // fix: use 0777 instead of 777
+            mkdir("./results analysis/results/Omniscient vs monotone", 0777);  // fix: use 0777 instead of 777
             output_file << ROOT
                         << R"(Omniscient vs monotone/experiment_)" << i
                         << ".txt";
@@ -230,7 +230,7 @@ int main() {
             std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 
             std::stringstream output_file;
-            int result = mkdir("./results analysis/results/EMA vs monotone", 0777);  // fix: use 0777 instead of 777
+            mkdir("./results analysis/results/EMA vs monotone", 0777);  // fix: use 0777 instead of 777
             output_file << ROOT
                         << R"(EMA vs monotone/experiment_)" << i
                         << ".txt";
@@ -251,7 +251,7 @@ int main() {
 
 
             std::stringstream output_file;
-            int result = mkdir("./results analysis/results/PHC vs monotone", 0777);
+            mkdir("./results analysis/results/PHC vs monotone", 0777);
             output_file << ROOT
                         << R"(PHC vs monotone/experiment_)" << i
                         << ".txt";
@@ -272,7 +272,7 @@ int main() {
 
 
             std::stringstream output_file;
-            int result = mkdir("./results analysis/results/IGA vs monotone", 0777);
+            mkdir("./results analysis/results/IGA vs monotone", 0777);
             output_file << ROOT
                         << R"(IGA vs monotone/experiment_)" << i
                         << ".txt";
@@ -282,6 +282,7 @@ int main() {
 
         }
     }
+
 
 
     if (false)
