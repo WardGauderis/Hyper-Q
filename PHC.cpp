@@ -25,12 +25,9 @@ PHC::PHC(float alpha_, float delta_, float gamma_, float epsilon_) {
     }
 
     for (int state=0; state<9; state++) {
-        // probabilities
-        srand(static_cast<unsigned int>(time(nullptr)+0)); 
+        // probabilities 
         double p1 = static_cast<double>(rand()) / RAND_MAX;
-        srand(static_cast<unsigned int>(time(nullptr)+1)); 
         double p2 = static_cast<double>(rand()) / RAND_MAX;
-        srand(static_cast<unsigned int>(time(nullptr)+2)); 
         double p3 = static_cast<double>(rand()) / RAND_MAX;
 
         double sum = p1+p2+p3;
@@ -41,7 +38,6 @@ PHC::PHC(float alpha_, float delta_, float gamma_, float epsilon_) {
 
 // returns greedy action according to policy.
 unsigned long PHC::greedy() {
-    srand(static_cast<unsigned int>(time(nullptr))); 
     auto random = static_cast<double>(rand()) / RAND_MAX;
 
     // choose action based on policy probabilities.
@@ -68,7 +64,6 @@ std::tuple<Action, Strategy, Reward> PHC::act() {
     // exploration factor.
     auto random = static_cast<double>(rand()) / RAND_MAX;
     if (random < epsilon) {
-        srand(static_cast<unsigned int>(time(nullptr))); 
         auto action = static_cast<unsigned long>(rand() % 3);
         current_action = action;
         return {action, policy_table[current_state], NAN};
