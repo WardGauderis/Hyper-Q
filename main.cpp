@@ -24,7 +24,9 @@ void run_test(const std::string &output_file,
               const unsigned int steps,
               const std::unique_ptr<Game> &game,
               const std::unique_ptr<Agent> &agent_x,
-              const std::unique_ptr<Agent> &agent_y) {
+              const std::unique_ptr<Agent> &agent_y,
+              const unsigned int log_every = 10
+) {
     std::ofstream output;
     output.open(output_file);
 
@@ -42,9 +44,11 @@ void run_test(const std::string &output_file,
 
         auto [reward_x, reward_y] = game->step(action_x, action_y);
 
-        output << action_x << " " << action_y << " " << reward_x << " " << reward_y << " "
-               << strategy_x[0] << " " << strategy_x[1] << " " << strategy_x[2] << " "
-               << strategy_y[0] << " " << strategy_y[1] << " " << strategy_y[2] << "\n";
+        if (i % log_every == 0) {
+            output << action_x << " " << action_y << " " << reward_x << " " << reward_y << " "
+                   << strategy_x[0] << " " << strategy_x[1] << " " << strategy_x[2] << " "
+                   << strategy_y[0] << " " << strategy_y[1] << " " << strategy_y[2] << "\n";
+        }
 
         agent_x->observe(reward_x, strategy_x, action_y, strategy_y);
         agent_y->observe(reward_y, strategy_y, action_x, strategy_x);
@@ -189,7 +193,6 @@ int main() {
             std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
 
 
-
             std::stringstream output_file;
             output_file << ROOT
                         << R"(IGA vs EMA/experiment_)" << i
@@ -275,7 +278,7 @@ int main() {
         }
     }
 
-    
+
     if (false) {
         // Omniscient vs monotone
         for (int i = 0; i < experiments; i++) {
@@ -354,7 +357,6 @@ int main() {
             run_test(output_file.str(), steps, game, agent_x, agent_y);
         }
     }
-
 
 
     if (false)

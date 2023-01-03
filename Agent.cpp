@@ -82,3 +82,7 @@ bool Agent::valid_index(StrategyIndex index) {
 
     return grid_size > x + y;
 }
+
+void Agent::initialise_logging(const std::string &filename) {
+    log_file.open(filename);
+}
