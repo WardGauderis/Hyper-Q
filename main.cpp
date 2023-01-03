@@ -30,7 +30,7 @@ void run_test(const std::string &output_file,
     for (unsigned int i = 0; i < steps; i++) {
         Action action_x, action_y;
         Strategy strategy_x, strategy_y;
-        Reward value_x, value_y;
+        Reward value_x, value_y = 0.0;
 
 //        if (i % 1000 == 0) {
 //            std::tie(action_x, strategy_x) = agent_x->random_restart();
@@ -168,7 +168,7 @@ int main() {
     //std::unique_ptr<Agent> agent_iga = std::make_unique<IGA>(step_size);
 
 
-    if (false) {
+    if (true) {
         // Bayesian Hyper-Q vs monotone
         for (int i = 0; i < 3; i++) {
 
@@ -188,7 +188,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // IGA vs Bayesian Hyper-Q
         for (int i = 0; i < 3; i++) {
 
@@ -209,7 +209,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // IGA vs EMA Hyper-Q
         for (int i = 0; i < 20; i++) {
 
@@ -229,7 +229,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // IGA vs Omniscient Hyper-Q
         for (int i = 0; i < 20; i++) {
 
@@ -248,7 +248,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // PHC vs Bayesian Hyper-Q
         for (int i = 0; i < 3; i++) {
 
@@ -269,7 +269,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // PHC vs EMA Hyper-Q
         for (int i = 0; i < 20; i++) {
             srand(static_cast<unsigned int>(i));
@@ -304,7 +304,7 @@ int main() {
     }
 
 
-    if (false) {
+    if (true) {
         // Omniscient vs monotone
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(time(nullptr)));
@@ -322,7 +322,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // EMA vs monotone
         for (int i = 0; i < experiments; i++) {
 
@@ -342,7 +342,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // PHC vs monotone
         for (int i = 0; i < experiments; i++) {
 
@@ -363,7 +363,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // IGA vs monotone
         for (int i = 0; i < experiments; i++) {
 

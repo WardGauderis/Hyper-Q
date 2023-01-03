@@ -22,12 +22,12 @@ public:
         }
     }
 
-    std::tuple<Action, Strategy, Reward> act() {
+    std::tuple<Action, Strategy, Reward> act() override {
         auto [x, value] = greedy();
         return {strategy_to_action(x), x, value};
     }
 
-    void observe(Reward r, Strategy x, Action action_y, Strategy true_y) {
+    void observe(Reward r, Strategy x, Action action_y, Strategy true_y) override {
         (void) true_y;
         auto x_index = strategy_to_index(x);
 
@@ -50,7 +50,6 @@ public:
 
         for (StrategyIndex y_index = 0; y_index < num_strategies; ++y_index) {
             if (!valid_index(y_index)) continue;
-            auto y = index_to_strategy(y_index);
             auto index = strategies_to_index({x_index, y_index});
             value += hyper_q_table[index] * posterior_table[y_index];
         }

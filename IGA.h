@@ -14,7 +14,7 @@ class IGA : public Agent {
 
     private:
         // parameters.
-        float step_size;
+        double step_size;
         // tables.
         Strategy policy;
 
