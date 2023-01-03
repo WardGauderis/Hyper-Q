@@ -70,7 +70,7 @@ int extension() {
     for (int i = 0; i < experiments; i++) {
         std::cout << "Experiment " << i << std::endl;
 
-        srand(i);
+        srand(static_cast<unsigned int>(i));
         std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
         std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
 
@@ -82,12 +82,12 @@ int extension() {
                     << ".txt";
 
         // Run the test and store the output in the output file
-        run_test(output_file.str(), steps, game, agent_x, agent_y);
+        run_test(output_file.str(), static_cast<unsigned int>(steps), game, agent_x, agent_y);
     }
 
     // Omniscient vs Omniscient: COOP
     for (int i = 0; i < experiments; i++) {
-        srand(i);
+        srand(static_cast<unsigned int>(i));
         std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
         std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
 
@@ -98,13 +98,12 @@ int extension() {
                     << ".txt";
 
         // Run the test and store the output in the output file
-        run_test(output_file.str(), steps, game, agent_x, agent_y);
+        run_test(output_file.str(), static_cast<unsigned int>(steps), game, agent_x, agent_y);
     }
 
     // Bayesian vs Bayesian: COOP
-    for (unsigned int i = 0; i < 1; i++) {
-        srand(i);
-
+    for (int i = 0; i < 1; i++) {
+        srand(static_cast<unsigned int>(i));
         std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
         std::unique_ptr<Agent> agent_y = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
 

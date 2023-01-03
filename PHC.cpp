@@ -5,10 +5,10 @@
 // http://www.cs.cmu.edu/~mmv/papers/01ijcai-mike.pdf
 
 PHC::PHC(float alpha_, float delta_, float gamma_, float epsilon_) {
-    alpha = alpha_;
-    delta = delta_;
-    gamma = gamma_;
-    epsilon = epsilon_;
+    alpha = static_cast<double>(alpha_);
+    delta = static_cast<double>(delta_);
+    gamma = static_cast<double>(gamma_);
+    epsilon = static_cast<double>(epsilon_);
     current_state = 0;
     current_action = 0;
 
@@ -25,26 +25,26 @@ PHC::PHC(float alpha_, float delta_, float gamma_, float epsilon_) {
     for (int state=0; state<9; state++) {
         // probabilities
         srand(static_cast<unsigned int>(time(nullptr))); 
-        float p1 = static_cast<float>(rand()) / RAND_MAX;
+        double p1 = rand() / RAND_MAX;
         srand(static_cast<unsigned int>(time(nullptr))); 
-        float p2 = static_cast<float>(rand()) / RAND_MAX;
+        double p2 = rand() / RAND_MAX;
         srand(static_cast<unsigned int>(time(nullptr))); 
-        float p3 = static_cast<float>(rand()) / RAND_MAX;
+        double p3 = rand() / RAND_MAX;
 
-        float sum = p1+p2+p3;
+        double sum = p1+p2+p3;
 
-        policy_table[state] = {p1/sum,p2/sum,p3/sum};
+        policy_table[state] = {p1/sum, p2/sum, p3/sum};
     }
 }
 
 // returns greedy action according to policy.
 unsigned long PHC::greedy() {
     srand(static_cast<unsigned int>(time(nullptr))); 
-    float random = static_cast<float>(rand()) / RAND_MAX;
+    auto random = rand() / RAND_MAX;
 
     // choose action based on policy probabilities.
-    float p_rock = policy_table[current_state][0];
-    float p_paper = policy_table[current_state][1];
+    double p_rock = policy_table[current_state][0];
+    double p_paper = policy_table[current_state][1];
 
     if (random < p_rock) {
         unsigned long action = 0; // rock.
@@ -64,7 +64,7 @@ unsigned long PHC::greedy() {
 
 std::pair<Action, Strategy> PHC::act() {
     // exploration factor.
-    auto random = static_cast<float>(rand()) / RAND_MAX;
+    auto random = rand() / RAND_MAX;
     if (random < epsilon) {
         srand(static_cast<unsigned int>(time(nullptr))); 
         auto action = static_cast<unsigned long>(rand() % 3);
@@ -87,14 +87,14 @@ void PHC::observe(Reward r, Strategy x, Action action_y, Strategy true_y) {
     unsigned long next_state = 3*current_action + action_y;
 
     // get the q value for current state, and the max q value for the next state.
-    float q = q_table[current_state][current_action];
-    float q_max_next = *std::max_element(q_table[next_state], q_table[next_state]+3);
+    double q = q_table[current_state][current_action];
+    double q_max_next = *std::max_element(q_table[next_state], q_table[next_state]+3);
     
     // update q table.
     q_table[current_state][current_action] = (1-alpha)*q + alpha*(r + (gamma * q_max_next));
     
     // update policy table.
-    float update = 0;
+    double update = 0;
     if (current_action == static_cast<unsigned long>(std::distance(q_table[current_state], std::max_element(q_table[current_state], q_table[current_state]+3)))) {
         // i.e., if the current action equals argmax(Q[current_state]), then,
         update = delta;
@@ -104,13 +104,21 @@ void PHC::observe(Reward r, Strategy x, Action action_y, Strategy true_y) {
     }
     policy_table[current_state][current_action] += update;
     
+    // probability boundaries
+    for (unsigned long state=0; state < 9; state++) {
+        for (unsigned long i=0; i<3; i++) {
+            if (policy_table[state][i] < 0.0) { policy_table[state][i] = 0.0; }
+            if (policy_table[state][i] > 1.0) { policy_table[state][i] = 1.0; }
+        }
+    } 
+
     // normalize new policy values.
-    float sum = 0;
+    double sum = 0;
     for (unsigned long state=0; state < 9; state++) {
         sum = policy_table[state][0] +  policy_table[state][1] +  policy_table[state][2];
 
         for (unsigned long i=0; i<3; i++) {
-            policy_table[state][i] = static_cast<float>(policy_table[state][i])/sum;
+            policy_table[state][i] = static_cast<double>(policy_table[state][i]/sum);
         }
     }
 

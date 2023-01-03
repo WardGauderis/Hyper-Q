@@ -17,14 +17,14 @@ class PHC : public Agent {
 
     private:
         // parameters.
-        float alpha;
-        float delta;
-        float gamma;
-        float epsilon;
+        double alpha;
+        double delta;
+        double gamma;
+        double epsilon;
         unsigned long current_state;
         unsigned long current_action;
         // tables.
-        float q_table[num_states][num_actions];
+        double q_table[num_states][num_actions];
         Strategy policy_table[num_states];
 
         // methods.
