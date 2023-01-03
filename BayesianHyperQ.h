@@ -22,7 +22,8 @@ public:
     }
 
     std::pair<Action, Strategy> act() {
-        auto x = greedy().first;
+        auto [x, value] = greedy();
+        log_file << value << std::endl;
         return {strategy_to_action(x), x};
     }
 

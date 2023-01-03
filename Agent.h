@@ -5,6 +5,8 @@
 #ifndef HYPER_Q_AGENT_H
 #define HYPER_Q_AGENT_H
 
+#include <string>
+#include <fstream>
 #include "Definitions.h"
 
 static const unsigned int grid_size = 25;
@@ -21,7 +23,11 @@ public:
 
     static std::pair<Action, Strategy> random_restart();
 
+    void initialise_logging(const std::string& filename);
+
 protected:
+    std::ofstream log_file;
+
     static Action strategy_to_action(Strategy strategy);
 
     static Strategy index_to_strategy(StrategyIndex index);
