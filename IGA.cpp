@@ -13,14 +13,14 @@
 IGA::IGA(float step_size_) {
     step_size = static_cast<double>(step_size_);
 
-    srand(static_cast<unsigned int>(time(nullptr))); 
-    policy[0] = rand() / RAND_MAX;
+    srand(static_cast<unsigned int>(time(nullptr)+0)); 
+    policy[0] = static_cast<double>(rand()) / RAND_MAX;
 
-    srand(static_cast<unsigned int>(time(nullptr))); 
-    policy[1] = rand() / RAND_MAX;
+    srand(static_cast<unsigned int>(time(nullptr)+1)); 
+    policy[1] = static_cast<double>(rand()) / RAND_MAX;
 
-    srand(static_cast<unsigned int>(time(nullptr))); 
-    policy[2] = rand() / RAND_MAX;
+    srand(static_cast<unsigned int>(time(nullptr)+2)); 
+    policy[2] = static_cast<double>(rand()) / RAND_MAX;
 
     // normalize
     double sum = 0;
@@ -34,7 +34,7 @@ IGA::IGA(float step_size_) {
 // returns greedy action according to policy.
 int IGA::greedy(Strategy strat) {
     srand(static_cast<unsigned int>(time(nullptr))); 
-    double random = rand() / RAND_MAX;
+    double random = static_cast<double>(rand()) / RAND_MAX;
 
     // choose action based on policy probabilities.
     double p_rock = strat[0];

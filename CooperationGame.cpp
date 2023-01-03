@@ -35,12 +35,12 @@ Rewards CooperationGame::step(Action action_x, Action action_y) {
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(0, 1);
 
-    float reward = 0.0;
+    double reward = 0.0;
 
     if (probability >= dis(gen)) {
-        reward = static_cast<float>(reward_matrix1[action_x][action_y]);
+        reward = reward_matrix1[action_x][action_y];
     } else {
-        reward = static_cast<float>(reward_matrix2[action_x][action_y]);
+        reward = reward_matrix2[action_x][action_y];
     }
 
     return {reward, reward};
