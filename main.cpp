@@ -138,9 +138,9 @@ int main() {
 
     std::unique_ptr<Game> game = std::make_unique<RockPaperScissors>();
 
-    auto gamma = 0.9;
-    auto alpha = 0.01;
-    auto mu = 0.005;
+    auto gamma = 0.99;
+    auto alpha = 0.1;
+    auto mu = 0.01;
 
     auto delta = 0.01;
     auto epsilon = 0.01;
@@ -148,13 +148,13 @@ int main() {
 
     auto experiments = 20;
     unsigned int steps = 600000;
-//
+
 //    for (int i = 0; i < 1; i++) {
 //
 //        srand(static_cast<unsigned int>(time(nullptr)));
-////        std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+//        std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
 ////        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-//        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+////        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
 //        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
 //
 //        std::stringstream output_file;
