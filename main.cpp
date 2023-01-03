@@ -68,7 +68,8 @@ void run_test(const std::string &output_file,
 
         if (i % 100000 == 1) {
             std::cout << "Step " << i << std::endl;
-            std::cout << strategy_x[0] << " " << strategy_x[1] << " " << strategy_x[2] << std::endl;
+            std::cout << "Strategy x: " << strategy_x[0] << " " << strategy_x[1] << " " << strategy_x[2] << std::endl;
+            std::cout << "Strategy y: " << strategy_y[0] << " " << strategy_y[1] << " " << strategy_y[2] << std::endl;
         }
     }
 }
