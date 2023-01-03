@@ -7,27 +7,20 @@
 
 #include <string>
 #include <fstream>
+#include <tuple>
 #include "Definitions.h"
-
-static const unsigned int grid_size = 25;
-static const unsigned int num_strategies = grid_size * grid_size;
-static const unsigned int num_pairs = num_strategies * num_strategies;
 
 class Agent {
 public:
-    virtual std::pair<Action, Strategy> act() = 0;
+    virtual std::tuple<Action, Strategy, Reward> act() = 0;
 
     virtual void observe(Reward r, Strategy x, Action action_y, Strategy y_true) = 0;
 
     virtual ~Agent() = default;
 
-    static std::pair<Action, Strategy> random_restart();
-
-    void initialise_logging(const std::string& filename);
+    virtual std::tuple<Action, Strategy, Reward> random_restart();
 
 protected:
-    std::ofstream log_file;
-
     static Action strategy_to_action(Strategy strategy);
 
     static Strategy index_to_strategy(StrategyIndex index);

@@ -5,15 +5,16 @@
 #ifndef HYPER_Q_MONOTONE_
 #define HYPER_Q_MONOTONE_
 
+#include <cmath>
 #include "Agent.h"
 
 class Monotone : public Agent {
 public:
     explicit Monotone(const Strategy &strategy) : strategy(strategy) {}
 
-    std::pair<Action, Strategy> act() override {
+    std::tuple<Action, Strategy, Reward> act() override {
 
-        return {strategy_to_action(strategy), strategy};
+        return {strategy_to_action(strategy), strategy, NAN};
     }
 
     void observe(Reward r, Strategy x, Action action_y, Strategy y_true) override {

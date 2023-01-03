@@ -16,13 +16,14 @@ class HyperQ : public Agent {
 public:
     HyperQ(std::unique_ptr<StrategyEstimation> estimation, double alpha, double gamma) : estimation(
             std::move(estimation)), alpha(alpha), gamma(gamma) {
-        std::fill(hyper_q_table.begin(), hyper_q_table.end(), 0);
+        for (auto &q: hyper_q_table) {
+            q = static_cast<double>(rand()) / RAND_MAX * 2 - 1;
+        }
     }
 
-    std::pair<Action, Strategy> act() override {
+    std::tuple<Action, Strategy, Reward> act() override {
         auto [x, value] = greedy();
-        log_file << value << std::endl;
-        return {strategy_to_action(x), x};
+        return {strategy_to_action(x), x, value};
     }
 
     void observe(Reward r, Strategy x, Action action_y, Strategy true_y) override {
@@ -37,6 +38,15 @@ public:
 
         auto max = greedy().second;
         hyper_q_table[index] += alpha * (r + gamma * max - hyper_q_table[index]);
+    }
+
+    std::tuple<Action, Strategy, Reward> random_restart() override {
+        auto [action_x, x, reward] = Agent::random_restart();
+        auto y = estimation->estimate();
+        auto y_index = strategy_to_index(y);
+        auto x_index = strategy_to_index(x);
+        auto index = strategies_to_index({x_index, y_index});
+        return {action_x, x, hyper_q_table[index]};
     }
 
 private:

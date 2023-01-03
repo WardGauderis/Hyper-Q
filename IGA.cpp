@@ -5,6 +5,7 @@
 #include <fstream>
 #include <memory>
 #include <iostream>
+#include <cmath>
 
 // https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=Nash+Convergence+of+Gradient+Dynamics+in+General-Sum+Games.&btnG=
 
@@ -53,9 +54,9 @@ int IGA::greedy(Strategy strat) {
     }
 }
 
-std::pair<Action, Strategy> IGA::act() {
+std::tuple<Action, Strategy, Reward> IGA::act() {
     int action = greedy(policy);
-    return {action, policy};
+    return {action, policy, NAN};
 }
 
 void IGA::observe(Reward r, Strategy x, Action action_y, Strategy true_y) {

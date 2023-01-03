@@ -1,6 +1,7 @@
 #include "PHC.h"
 #include <algorithm>
 #include <numeric>
+#include <cmath>
 
 // http://www.cs.cmu.edu/~mmv/papers/01ijcai-mike.pdf
 
@@ -62,19 +63,19 @@ unsigned long PHC::greedy() {
     }
 }
 
-std::pair<Action, Strategy> PHC::act() {
+std::tuple<Action, Strategy, Reward> PHC::act() {
     // exploration factor.
     auto random = static_cast<float>(rand()) / RAND_MAX;
     if (random < epsilon) {
         srand(static_cast<unsigned int>(time(nullptr))); 
         auto action = static_cast<unsigned long>(rand() % 3);
         current_action = action;
-        return {action, policy_table[current_state]};
+        return {action, policy_table[current_state], NAN};
     }
     // greedy.
     else {
         auto action = greedy();
-        return {action, policy_table[current_state]};
+        return {action, policy_table[current_state], NAN};
     }
 }
 
