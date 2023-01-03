@@ -17,6 +17,9 @@ std::tuple<Action, Strategy, Reward> Agent::random_restart() {
     for (auto &i: strategy) {
         i /= sum;
     }
+
+    assert(std::abs(std::accumulate(strategy.begin(), strategy.end(), 0.0) - 1.0) < 1e-6);
+    
     return {strategy_to_action(strategy), strategy, NAN};
 }
 
@@ -50,13 +53,16 @@ Strategy Agent::index_to_strategy(StrategyIndex index) {
         strategy[i] = static_cast<double>(indices[i]) / sum;
     }
 
+    assert(std::abs(std::accumulate(strategy.begin(), strategy.end(), 0.0) - 1.0) < 1e-6);
+
     return strategy;
 }
 
 StrategyIndex Agent::strategy_to_index(Strategy strategy) {
+    assert(std::abs(std::accumulate(strategy.begin(), strategy.end(), 0.0) - 1.0) < 1e-6);
+
     const auto sum = grid_size - 1;
     std::array<unsigned int, 3> indices{};
-
 
     indices[0] = static_cast<unsigned int>(std::round(strategy[0] * sum));
     indices[1] = static_cast<unsigned int>(std::round(strategy[1] * sum));

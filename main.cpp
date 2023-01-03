@@ -24,6 +24,10 @@ void run_test(const std::string &output_file,
               const std::unique_ptr<Agent> &agent_y,
               const unsigned int log_every = 10
 ) {
+    std::cout << "############################################################################" << std::endl;
+    std::cout << "Running test: " << output_file << std::endl;
+    std::cout << "############################################################################" << std::endl;
+
     std::ofstream output;
     output.open(output_file);
 
@@ -62,7 +66,7 @@ void run_test(const std::string &output_file,
         agent_x->observe(reward_x, strategy_x, action_y, strategy_y);
         agent_y->observe(reward_y, strategy_y, action_x, strategy_x);
 
-        if (i % 50000 == 255) {
+        if (i % 100000 == 1) {
             std::cout << "Step " << i << std::endl;
             std::cout << strategy_x[0] << " " << strategy_x[1] << " " << strategy_x[2] << std::endl;
         }
