@@ -17,18 +17,18 @@
 class BayesianHyperQ : public Agent {
 public:
     BayesianHyperQ(double alpha, double gamma, double mu) : alpha(alpha), gamma(gamma), mu(mu) {
-        std::fill(hyper_q_table.begin(), hyper_q_table.end(), 0);
-        std::fill(posterior_table.begin(), posterior_table.end(), 0);
+        for (auto &q: hyper_q_table) {
+            q = static_cast<double>(rand()) / RAND_MAX * 2 - 1;
+        }
     }
 
-    std::pair<Action, Strategy> act() {
+    std::tuple<Action, Strategy, Reward> act() {
         auto [x, value] = greedy();
-        log_file << value << std::endl;
-        return {strategy_to_action(x), x};
+        return {strategy_to_action(x), x, value};
     }
 
     void observe(Reward r, Strategy x, Action action_y, Strategy true_y) {
-        (void)true_y;
+        (void) true_y;
         auto x_index = strategy_to_index(x);
 
         update_posterior(action_y);
@@ -40,6 +40,22 @@ public:
 
             hyper_q_table[index] += alpha * posterior_table[y_index] * (r + gamma * max - hyper_q_table[index]);
         }
+    }
+
+    std::tuple<Action, Strategy, Reward> random_restart() override {
+        auto [action_x, x, reward] = Agent::random_restart();
+        auto value = 0.0;
+
+        auto x_index = strategy_to_index(x);
+
+        for (StrategyIndex y_index = 0; y_index < num_strategies; ++y_index) {
+            if (!valid_index(y_index)) continue;
+            auto y = index_to_strategy(y_index);
+            auto index = strategies_to_index({x_index, y_index});
+            value += hyper_q_table[index] * posterior_table[y_index];
+        }
+
+        return {action_x, x, value};
     }
 
 private:

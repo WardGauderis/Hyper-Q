@@ -8,7 +8,7 @@
 #include <cmath>
 #include "Agent.h"
 
-std::pair<Action, Strategy> Agent::random_restart() {
+std::tuple<Action, Strategy, Reward> Agent::random_restart() {
     Strategy strategy;
     for (auto &i: strategy) {
         i = static_cast<double >(rand()) / static_cast<double>(RAND_MAX);
@@ -17,7 +17,7 @@ std::pair<Action, Strategy> Agent::random_restart() {
     for (auto &i: strategy) {
         i /= sum;
     }
-    return {strategy_to_action(strategy), strategy};
+    return {strategy_to_action(strategy), strategy, NAN};
 }
 
 Action Agent::strategy_to_action(Strategy strategy) {
@@ -81,8 +81,4 @@ bool Agent::valid_index(StrategyIndex index) {
     auto y = index % grid_size;
 
     return grid_size > x + y;
-}
-
-void Agent::initialise_logging(const std::string &filename) {
-    log_file.open(filename);
 }
