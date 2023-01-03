@@ -43,9 +43,9 @@ void run_test(const std::string &output_file,
             std::tie(action_x, strategy_x, value_x) = agent_x->act();
         }
         if (i % 1000 == 500) {
-            std::tie(action_y, strategy_y, value_x) = agent_y->random_restart();
+            std::tie(action_y, strategy_y, value_y) = agent_y->random_restart();
         } else {
-            std::tie(action_y, strategy_y, value_x) = agent_y->act();
+            std::tie(action_y, strategy_y, value_y) = agent_y->act();
         }
 
         auto [reward_x, reward_y] = game->step(action_x, action_y);
