@@ -27,7 +27,7 @@ public:
         return {strategy_to_action(x), x, value};
     }
 
-    void observe(Reward r, Strategy x, Action action_y, Strategy true_y) override {
+    void observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) override {
         (void) true_y;
         auto x_index = strategy_to_index(x);
 
@@ -57,7 +57,7 @@ public:
         return {action_x, x, value};
     }
 
-private:
+protected:
     std::array<Reward, num_strategies> posterior_table{};
     std::array<Reward, num_pairs> hyper_q_table{};
     std::deque<Action> history{};

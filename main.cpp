@@ -11,6 +11,7 @@
 #include "PHC.h"
 #include "IGA.h"
 #include "CooperationGame.h"
+#include "BayesianUltraQ.h"
 
 #include <memory>
 
@@ -42,9 +43,9 @@ void run_test(const std::string &output_file,
             std::tie(action_x, strategy_x, value_x) = agent_x->act();
         }
         if (i % 1000 == 500) {
-            std::tie(action_y, strategy_y, value_x) = agent_y->random_restart();
+            std::tie(action_y, strategy_y, value_y) = agent_y->random_restart();
         } else {
-            std::tie(action_y, strategy_y, value_x) = agent_y->act();
+            std::tie(action_y, strategy_y, value_y) = agent_y->act();
         }
 
         auto [reward_x, reward_y] = game->step(action_x, action_y);
@@ -56,10 +57,10 @@ void run_test(const std::string &output_file,
                    << value_x << " " << value_y << "\n";
         }
 
-        agent_x->observe(reward_x, strategy_x, action_y, strategy_y);
-        agent_y->observe(reward_y, strategy_y, action_x, strategy_x);
+        agent_x->observe(reward_x, action_x, strategy_x, action_y, strategy_y);
+        agent_y->observe(reward_y, action_y, strategy_y, action_x, strategy_x);
 
-        if (i % 100000 == 1) {
+        if (i % 10000 == 1) {
             std::cout << "Step " << i << std::endl;
             std::cout << "Strategy x: " << strategy_x[0] << " " << strategy_x[1] << " " << strategy_x[2] << std::endl;
             std::cout << "Strategy y: " << strategy_y[0] << " " << strategy_y[1] << " " << strategy_y[2] << std::endl;
@@ -157,8 +158,8 @@ int main() {
         for (int i = 0; i < 3; i++) {
 
             srand(static_cast<unsigned int>(i));
-            std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
-            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 0, 1});
+            std::unique_ptr<Agent> agent_x = std::make_unique<BayesianUltraQ>(alpha, gamma, mu);
+            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 1, 0});
 
             std::stringstream output_file;
             output_file << ROOT

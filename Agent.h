@@ -14,7 +14,7 @@ class Agent {
 public:
     virtual std::tuple<Action, Strategy, Reward> act() = 0;
 
-    virtual void observe(Reward r, Strategy x, Action action_y, Strategy y_true) = 0;
+    virtual void observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy y) = 0;
 
     virtual ~Agent() = default;
 

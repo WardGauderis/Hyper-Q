@@ -10,7 +10,7 @@ class IGA : public Agent {
         IGA(float step_size_);
 
         std::tuple<Action, Strategy, Reward> act() override;
-        void observe(Reward r, Strategy x, Action action_y, Strategy y) override;
+        void observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy y) override;
 
     private:
         // parameters.

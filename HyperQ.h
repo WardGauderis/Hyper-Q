@@ -26,7 +26,7 @@ public:
         return {strategy_to_action(x), x, value};
     }
 
-    void observe(Reward r, Strategy x, Action action_y, Strategy true_y) override {
+    void observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) override {
         auto y = estimation->estimate();
 
         auto x_index = strategy_to_index(x);
