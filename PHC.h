@@ -13,7 +13,7 @@ class PHC : public Agent {
         PHC(float alpha_, float delta_, float gamma_, float epsilon_);
 
         std::tuple<Action, Strategy, Reward> act() override;
-        void observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy y) override;
+        double observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy y) override;
 
     private:
         // parameters.

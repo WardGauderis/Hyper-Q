@@ -17,11 +17,12 @@ public:
         return {strategy_to_action(strategy), strategy, NAN};
     }
 
-    void observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy y) override {
+    double observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy y) override {
         (void)r;
         (void)x;
         (void)action_y;
         (void)y;
+        return NAN;
     }
 
 private:

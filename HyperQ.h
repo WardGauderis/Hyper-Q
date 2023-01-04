@@ -24,7 +24,7 @@ public:
         return {strategy_to_action(x), x, value};
     }
 
-    void observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) override {
+    double observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) override {
         auto y = estimation->estimate();
 
         auto x_index = strategy_to_index(x);
@@ -35,7 +35,10 @@ public:
         estimation->observe(action_y, true_y);
 
         auto max = greedy().second;
-        hyper_q_table[index] += alpha * (r + gamma * max - hyper_q_table[index]);
+        auto bellman_error = r + gamma * max - hyper_q_table[index];
+        hyper_q_table[index] += alpha * bellman_error;
+
+        return bellman_error;
     }
 
     std::tuple<Action, Strategy, Reward> random_restart() override {

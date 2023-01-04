@@ -53,7 +53,7 @@ std::tuple<Action, Strategy, Reward> IGA::act() {
     return {action, policy, NAN};
 }
 
-void IGA::observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) {
+double IGA::observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) {
     // silence unused parameters.
     (void)r;
     (void)x;
@@ -96,4 +96,6 @@ void IGA::observe(Reward r, Action action_x, Strategy x, Action action_y, Strate
     for (unsigned long i=0; i<3; i++) {
         policy[i] = policy[i]/sum;
     }
+
+    return NAN;
 }
