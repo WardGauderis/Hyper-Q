@@ -18,6 +18,10 @@ public:
         return strategy;
     }
 
+    void random_restart() override {
+        strategy = Agent::random_strategy();
+    }
+
 private:
     Strategy strategy = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
 };

@@ -16,9 +16,7 @@ class HyperQ : public Agent {
 public:
     HyperQ(std::unique_ptr<StrategyEstimation> estimation, double alpha, double gamma) : estimation(
             std::move(estimation)), alpha(alpha), gamma(gamma) {
-        for (auto &q: hyper_q_table) {
-            q = static_cast<double>(rand()) / RAND_MAX * 2 - 1;
-        }
+        hyper_q_table.fill(1);
     }
 
     std::tuple<Action, Strategy, Reward> act() override {
@@ -41,6 +39,7 @@ public:
     }
 
     std::tuple<Action, Strategy, Reward> random_restart() override {
+        estimation->random_restart();
         auto [action_x, x, reward] = Agent::random_restart();
         auto y = estimation->estimate();
         auto y_index = strategy_to_index(y);

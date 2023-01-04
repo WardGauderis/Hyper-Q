@@ -17,9 +17,10 @@
 class BayesianHyperQ : public Agent {
 public:
     BayesianHyperQ(double alpha, double gamma, double mu) : alpha(alpha), gamma(gamma), mu(mu) {
-        for (auto &q: hyper_q_table) {
-            q = static_cast<double>(rand()) / RAND_MAX * 2 - 1;
+        for (auto &posterior: posterior_table) {
+            posterior = 1.0 / num_strategies;
         }
+        hyper_q_table.fill(1);
     }
 
     std::tuple<Action, Strategy, Reward> act() override {
@@ -43,6 +44,11 @@ public:
     }
 
     std::tuple<Action, Strategy, Reward> random_restart() override {
+        history.clear();
+        for (auto &posterior: posterior_table) {
+            posterior = 1.0 / num_strategies;
+        }
+
         auto [action_x, x, reward] = Agent::random_restart();
         auto value = 0.0;
 

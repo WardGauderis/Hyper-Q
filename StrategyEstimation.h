@@ -14,6 +14,8 @@ public:
 
     virtual Strategy estimate() = 0;
 
+    virtual void random_restart() = 0;
+
     virtual ~StrategyEstimation() = default;
 };
 
