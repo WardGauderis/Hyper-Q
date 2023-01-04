@@ -41,12 +41,9 @@ void run_test(const std::string &output_file,
 
         if (i % 1000 == 0) {
             std::tie(action_x, strategy_x, value_x) = agent_x->random_restart();
-        } else {
-            std::tie(action_x, strategy_x, value_x) = agent_x->act();
-        }
-        if (i % 1000 == 500) {
             std::tie(action_y, strategy_y, value_y) = agent_y->random_restart();
         } else {
+            std::tie(action_x, strategy_x, value_x) = agent_x->act();
             std::tie(action_y, strategy_y, value_y) = agent_y->act();
         }
 
