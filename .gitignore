@@ -8,3 +8,4 @@ cmake_install.cmake
 CMakeFiles
 results analysis/results/
 results analysis/results2/
+results analysis/results*/
