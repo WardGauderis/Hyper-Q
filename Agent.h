@@ -20,6 +20,8 @@ public:
 
     virtual std::tuple<Action, Strategy, Reward> random_restart();
 
+    static Strategy random_strategy();
+
 protected:
     static Action strategy_to_action(Strategy strategy);
 

@@ -8,7 +8,7 @@
 #include <cmath>
 #include "Agent.h"
 
-std::tuple<Action, Strategy, Reward> Agent::random_restart() {
+Strategy Agent::random_strategy() {
     Strategy strategy;
     for (auto &i: strategy) {
         i = static_cast<double >(rand()) / static_cast<double>(RAND_MAX);
@@ -19,7 +19,11 @@ std::tuple<Action, Strategy, Reward> Agent::random_restart() {
     }
 
     assert(std::abs(std::accumulate(strategy.begin(), strategy.end(), 0.0) - 1.0) < 1e-6);
-    
+    return strategy;
+}
+
+std::tuple<Action, Strategy, Reward> Agent::random_restart() {
+    auto strategy = random_strategy();
     return {strategy_to_action(strategy), strategy, NAN};
 }
 
