@@ -199,6 +199,10 @@ plt.rcParams["figure.figsize"] = (10, 8)
 REWARDS_PLAYER_X = 2
 REWARDS_PLAYER_Y = 3
 
+ACTIONS_PLAYER_X_STARTING_IDX = 4
+ACTIONS_PLAYER_Y_STARTING_IDX = 7
+
+
 # %%
 # **********************************************
 # ************ Rock paper scisors  *************
@@ -295,6 +299,87 @@ plot_average_reward_hyperq_vs_other([
                                     file_name="HyperQ, IGA, PHC vs monotone")
 
 # %%
+
+
+
+
+
+
+# %%
+# **********************************************
+# ************** COOPERATION GAME # ************
+# **********************************************
+
+
+# %% Rewards
+
+omniscient_experiment_data = load_experiment_data(target_dir="results2/cooperation/Omniscient vs Omniscient")
+EMA_experiment_data = load_experiment_data(target_dir="results2/cooperation/EMA vs EMA")
+Bayesian_experiment_data = load_experiment_data(target_dir="results2/cooperation/Bayesian vs Bayesian")
+Bayesian_ultra_experiment_data = load_experiment_data(target_dir="results2/cooperation/Bayesian ultra vs Bayesian ultra")
+
+
+# %%
+plot_average_reward_hyperq_vs_other([
+                                    omniscient_experiment_data,
+                                    EMA_experiment_data,
+                                    Bayesian_experiment_data,
+                                    Bayesian_ultra_experiment_data],
+                                    title="Hyper-Q cooperation game: Avg. reward per time step",
+                                    agent_names=["Omniscient", "EMA", "Bayesian", "Bayesian ultra"],
+                                    ma_window_sizes=[5000, 5000, 5000, 5000],
+                                    symmetrical_reward=True,
+                                    agent_idx=REWARDS_PLAYER_X,
+                                    steps=60_000,
+                                    file_name="HyperQ cooperation Avg reward per time step")
+
+# %%
+################# OMNISCIENT ####################
+agent1_experiment1_strategies_over_time = omniscient_experiment_data[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+agent2_experiment1_strategies_over_time = omniscient_experiment_data[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+
+
+plot_strategy_over_time_single_agent(agent1_experiment1_strategies_over_time, title="Cooperation game: Omniscient agent1 strategy evolution", file_name="coop omniscient vs omniscient agent1 actions", steps=60_000)
+plot_strategy_over_time_single_agent(agent2_experiment1_strategies_over_time, title="Cooperation game: Omniscient agent2 strategy evolution", file_name="coop omniscient vs omniscient agent2 actions", steps=60_000)
+
+################# EMA ####################
+agent1_experiment1_strategies_over_time = EMA_experiment_data[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+agent2_experiment1_strategies_over_time = EMA_experiment_data[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+
+plot_strategy_over_time_single_agent(agent1_experiment1_strategies_over_time, title="Cooperation game: EMA agent1 strategy evolution", steps=60_000, file_name="coop EMA vs EMA agent1 actions")
+plot_strategy_over_time_single_agent(agent2_experiment1_strategies_over_time, title="Cooperation game: EMA agent2 strategy evolution", file_name="coop EMA vs EMA agent2 actions", steps=60_000)
+
+
+################# Bayesian ##################
+agent1_experiment1_strategies_over_time = Bayesian_experiment_data[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+agent2_experiment1_strategies_over_time = Bayesian_experiment_data[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+
+plot_strategy_over_time_single_agent(agent1_experiment1_strategies_over_time, title="Cooperation game: Bayesian agent1 strategy evolution", steps=60_000, file_name="coop Bayesian vs Bayesian agent1 actions")
+plot_strategy_over_time_single_agent(agent2_experiment1_strategies_over_time, title="Cooperation game: Bayesian agent2 strategy evolution", file_name="coop Bayesian vs Bayesian agent2 actions", steps=60_000)
+
+
+################# Bayesian ##################
+agent1_experiment1_strategies_over_time = Bayesian_ultra_experiment_data[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+agent2_experiment1_strategies_over_time = Bayesian_ultra_experiment_data[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+
+plot_strategy_over_time_single_agent(agent1_experiment1_strategies_over_time, title="Cooperation game: Bayesian ultra agent1 strategy evolution", steps=60_000, file_name="coop Bayesian ultra vs Bayesian ultra agent1 actions")
+plot_strategy_over_time_single_agent(agent2_experiment1_strategies_over_time, title="Cooperation game: Bayesian ultra agent2 strategy evolution", file_name="coop Bayesian vs Bayesian agent2 actions", steps=60_000)
+
+# %%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
