@@ -10,7 +10,7 @@ plt.rcParams["figure.figsize"] = (10, 8)
 # %%
 
 
-def load_experiment_data(target_dir="results/EMA vs monotone"):
+def load_experiment_data(target_dir="results2/EMA vs monotone"):
     # Create an empty list to store the data from each file
     all_data = []
 
@@ -119,6 +119,9 @@ def plot_average_reward_hyperq_vs_other(hyper_q_experiments,
 
     if steps is None:
         steps = max_steps
+    
+    # Generate a range of indices from 0 to the length of val1 - 1
+    time = range(steps)
 
     for idx, experiment_data in enumerate(hyper_q_experiments):
         nb_experiments, max_steps, _ = experiment_data.shape
@@ -126,8 +129,7 @@ def plot_average_reward_hyperq_vs_other(hyper_q_experiments,
         # mean of axis 0 -> wants seq of len t
         agent1_avg_rewards = np.mean(experiment_data[:, 0:steps, agent_idx], axis=0)
 
-        # Generate a range of indices from 0 to the length of val1 - 1
-        time = range(steps)
+
 
         # moving average
         ma_rewards = pd.Series(agent1_avg_rewards).rolling(
@@ -135,13 +137,18 @@ def plot_average_reward_hyperq_vs_other(hyper_q_experiments,
 
         # Create the plot using matplotlib's plot function
         plt.plot(time, ma_rewards,
-                 label=f'Rewards {agent_names[idx]} MA (window size = {ma_window_sizes[idx]})')
+                 label=f'{agent_names[idx]} MA (window size = {ma_window_sizes[idx]})')
 
         # Add a title, x and y labels, and a legend
         plt.title(title)
         plt.xlabel('Time')
         plt.ylabel('Reward')
         plt.legend()
+    
+    # Multiply the time values by 10 # beacuse c++ only saves every 10 steps
+    tick_positions = range(0, steps, 5000)
+    tick_labels = [x * 10 for x in tick_positions]
+    plt.xticks(tick_positions, tick_labels)
 
     if file_name:
         plt.savefig(file_name, dpi=300, bbox_inches="tight")
@@ -185,6 +192,12 @@ def plot_strategy_over_time_single_agent(strategies_over_time, title, steps=None
 
     plt.show()
 
+# %%
+
+plt.rcParams["figure.figsize"] = (10, 8)
+
+REWARDS_PLAYER_X = 2
+REWARDS_PLAYER_Y = 3
 
 # %%
 # **********************************************
@@ -192,50 +205,50 @@ def plot_strategy_over_time_single_agent(strategies_over_time, title, steps=None
 # **********************************************
 
 ################ IGA VS Omniscient, EMA, Bayesian  ###############
-omniscient_experiment_data = load_experiment_data(
-    target_dir="results/IGA vs omniscient")
-EMA_experiment_data = load_experiment_data(target_dir="results/IGA vs EMA")
-Bayesian_experiment_data = load_experiment_data(
-    target_dir="results/IGA vs Bayesian")
+omniscient_experiment_data = load_experiment_data(target_dir="results2/IGA vs omniscient")
+EMA_experiment_data = load_experiment_data(target_dir="results2/IGA vs EMA")
+Bayesian_experiment_data = load_experiment_data(target_dir="results2/IGA vs Bayesian")
+Bayesian_ultra_experiment_data = load_experiment_data(target_dir="results2/IGA vs Bayesian ultra")
 
 # %%
+
 
 ################ IGA VS Omniscient, EMA, Bayesian  ###############
 plot_average_reward_hyperq_vs_other([omniscient_experiment_data,
                                     EMA_experiment_data,
-                                    Bayesian_experiment_data],
+                                    Bayesian_experiment_data,
+                                    Bayesian_ultra_experiment_data
+                                    ],
                                     title="Hyper-Q vs. IGA: Avg. reward per time step",
                                     agent_names=["Omniscient",
-                                                 "EMA", "Bayesian"],
-                                    ma_window_sizes=[2000, 2000, 20_000],
+                                                 "EMA", "Bayesian", "Bayesian ultra"],
+                                    ma_window_sizes=[5000, 5000, 5000, 5000],
                                     symmetrical_reward=True,
-                                    steps=600_000,
+                                    agent_idx=3,
+                                    steps=60_000,
                                     file_name="HyperQ vs IGA Avg reward per time step")
 
 # %%
 
-# omniscient_experiment_data = load_experiment_data(target_dir="results/PHC vs omniscient")
-EMA_experiment_data = load_experiment_data(target_dir="results/PHC vs EMA")
-Bayesian_experiment_data = load_experiment_data(
-    target_dir="results/PHC vs Bayesian")
+omniscient_experiment_data = load_experiment_data(target_dir="results2/PHC vs omniscient")
+EMA_experiment_data = load_experiment_data(target_dir="results2/PHC vs EMA")
+Bayesian_experiment_data = load_experiment_data(target_dir="results2/PHC vs Bayesian")
+Bayesian_ultra_experiment_data = load_experiment_data(target_dir="results2/PHC vs Bayesian ultra")
 
 # %%
 
-# TODO: OMNISCIENT #
 plot_average_reward_hyperq_vs_other([
-    # omniscient_experiment_data,
+                                    omniscient_experiment_data,
                                     EMA_experiment_data,
-                                    Bayesian_experiment_data],
+                                    Bayesian_experiment_data,
+                                    Bayesian_ultra_experiment_data],
                                     title="Hyper-Q vs. PHC: Avg. reward per time step",
-                                    agent_names=[
-                                                #"Omniscient",
-                                                 "EMA", "Bayesian"
-                                                 ],
-                                    ma_window_sizes=[
-                                        # 2000, 
-                                        2000, 20_000],
+                                    agent_names=["Omniscient",
+                                                 "EMA", "Bayesian", "Bayesian ultra"],
+                                    ma_window_sizes=[5000, 5000, 5000, 5000],
                                     symmetrical_reward=True,
-                                    steps=600_000,
+                                    agent_idx=REWARDS_PLAYER_Y,
+                                    steps=60_000,
                                     file_name="HyperQ vs PHC Avg reward per time step")
 
 
@@ -245,11 +258,12 @@ plot_average_reward_hyperq_vs_other([
 
 
 ################ PHC, IGA, Omniscient, EMA, Bayesian vs monotone ###############
-experiment_vs_monotone1 = load_experiment_data(target_dir="results/PHC vs monotone")
-experiment_vs_monotone2 = load_experiment_data(target_dir="results/IGA vs monotone")
-experiment_vs_monotone3 = load_experiment_data(target_dir="results/Omniscient vs monotone")
-experiment_vs_monotone4 = load_experiment_data(target_dir="results/EMA vs monotone")
-experiment_vs_monotone5 = load_experiment_data(target_dir="results/Bayesian vs monotone")
+experiment_vs_monotone1 = load_experiment_data(target_dir="results2/PHC vs monotone")
+experiment_vs_monotone2 = load_experiment_data(target_dir="results2/IGA vs monotone")
+experiment_vs_monotone3 = load_experiment_data(target_dir="results2/Omniscient vs monotone")
+experiment_vs_monotone4 = load_experiment_data(target_dir="results2/EMA vs monotone")
+experiment_vs_monotone5 = load_experiment_data(target_dir="results2/Bayesian vs monotone")
+experiment_vs_monotone6 = load_experiment_data(target_dir="results2/Bayesian ultra vs monotone")
 
 # %%
 
@@ -259,6 +273,7 @@ plot_average_reward_hyperq_vs_other([
                                     experiment_vs_monotone3,
                                     experiment_vs_monotone4,
                                     experiment_vs_monotone5,
+                                    experiment_vs_monotone6
                                     ],
                                     title="PHC, IGA, Omniscient, EMA, Bayesian vs monotone: Avg. reward per time step",
                                     agent_names=[
@@ -266,16 +281,17 @@ plot_average_reward_hyperq_vs_other([
                                         "IGA",
                                         "Omniscient",
                                         "EMA",
-                                        "Bayesian"],
+                                        "Bayesian", "Bayesian ultra"],
                                     ma_window_sizes=[
-                                        2000,
-                                        2000,
-                                        2000, 
-                                        2000, 
-                                        20_000],
+                                        5000,
+                                        5000,
+                                        5000, 
+                                        5000, 
+                                        5000, 
+                                        5000],
                                     symmetrical_reward=True,
-                                    steps=600_000,
-                                    agent_idx=2,
+                                    steps=60_000,
+                                    agent_idx=REWARDS_PLAYER_X,
                                     file_name="HyperQ, IGA, PHC vs monotone")
 
 # %%
@@ -292,13 +308,13 @@ assert False
 ################ PHC VS MONOTONE ###############
 
 
-experiment_data = load_experiment_data(target_dir="results/PHC vs monotone")
+experiment_data = load_experiment_data(target_dir="results2/PHC vs monotone")
 
 plot_average_reward_over_time(experiment_data,
                               title="PHC vs Monotone",
                               agent1_name="PHC",
                               agent2_name="Monotone",
-                              steps=600_000,
+                              steps=60_000,
                               file_name='PHC vs monotone',
                               symmetrical_reward=False)
 
@@ -307,7 +323,7 @@ agent1_experiment1_strategies_over_time = experiment_data[:, :, 7:10]
 plot_strategy_over_time_single_agent(
     agent1_experiment1_strategies_over_time,
     title="Monotone agent1 strategy evolution",
-    steps=600_000,
+    steps=60_000,
     file_name="coop omniscient vs omniscient agent1 actions")
 
 
@@ -316,7 +332,7 @@ plot_strategy_over_time_single_agent(
 ################ IGA VS MONOTONE ###############
 
 
-experiment_data = load_experiment_data(target_dir="results/IGA vs monotone")
+experiment_data = load_experiment_data(target_dir="results2/IGA vs monotone")
 
 # %%
 
@@ -324,7 +340,7 @@ plot_average_reward_over_time(experiment_data,
                               title="Rewards IGA vs Monotone",
                               agent1_name="IGA",
                               agent2_name="Monotone",
-                              steps=600_000,
+                              steps=60_000,
                               file_name='IGA vs monotone',
                               symmetrical_reward=False)
 
@@ -334,7 +350,7 @@ plot_average_reward_over_time(experiment_data,
 ################ EMA VS MONOTONE ###############
 
 
-experiment_data = load_experiment_data(target_dir="results/EMA vs monotone")
+experiment_data = load_experiment_data(target_dir="results2/EMA vs monotone")
 
 # %%
 
@@ -358,7 +374,7 @@ plot_average_reward_over_time(
 
 ################ OMNISCIENT VS MONOTONE ###############
 
-# experiment_data2 = load_experiment_data(target_dir="results/Omniscient vs monotone")
+# experiment_data2 = load_experiment_data(target_dir="results2/Omniscient vs monotone")
 
 # plot_average_reward_over_time(experiment_data2, title="Omniscient vs Monotone", agent1_name="Omniscient", agent2_name="Monotone",
 #                               steps=50)
@@ -384,7 +400,7 @@ plot_average_reward_over_time(
 # **********************************************
 ################# OMNISCIENT ####################
 experiment_coop_data = load_experiment_data(
-    target_dir="results/cooperation/Omniscient vs Omniscient")
+    target_dir="results2/cooperation/Omniscient vs Omniscient")
 
 # %%
 
@@ -392,7 +408,7 @@ plot_average_reward_over_time(experiment_coop_data,
                               title="Cooperation game - Omniscient vs Omniscient - Reward over time",
                               agent1_name="EMA",
                               agent2_name="Monotone",
-                              steps=600_000,
+                              steps=60_000,
                               file_name='coop omniscient vs omniscient')
 
 # %%
@@ -405,21 +421,21 @@ agent2_experiment1_strategies_over_time = experiment_coop_data[:, :, 7:10]
 plot_strategy_over_time_single_agent(
     agent1_experiment1_strategies_over_time,
     title="Omniscient agent1 strategy evolution",
-    steps=600_000,
+    steps=60_000,
     file_name="coop omniscient vs omniscient agent1 actions")
 
 plot_strategy_over_time_single_agent(
     agent2_experiment1_strategies_over_time,
     title="Omniscient agent2 strategy evolution",
     file_name="coop omniscient vs omniscient agent2 actions",
-    steps=600_000)
+    steps=60_000)
 
 # %%
 
 
 ################# EMA ####################
 experiment_coop_data = load_experiment_data(
-    target_dir="results/cooperation/EMA vs EMA")
+    target_dir="results2/cooperation/EMA vs EMA")
 
 # %%
 
@@ -427,7 +443,7 @@ plot_average_reward_over_time(experiment_coop_data,
                               title="Cooperation game - EMA vs EMA - Reward over time",
                               agent1_name="EMA",
                               agent2_name="Monotone",
-                              steps=600_000,
+                              steps=60_000,
                               file_name='coop EMA vs EMA')
 
 # %%
@@ -440,21 +456,21 @@ agent2_experiment1_strategies_over_time = experiment_coop_data[:, :, 7:10]
 plot_strategy_over_time_single_agent(
     agent1_experiment1_strategies_over_time,
     title="EMA agent1 strategy evolution",
-    steps=600_000,
+    steps=60_000,
     file_name="coop EMA vs EMA agent1 actions")
 
 plot_strategy_over_time_single_agent(
     agent2_experiment1_strategies_over_time,
     title="EMA agent2 strategy evolution",
     file_name="coop EMA vs EMA agent2 actions",
-    steps=600_000)
+    steps=60_000)
 
 # %%
 
 
 ################# Bayesian ##################
 experiment_coop_data = load_experiment_data(
-    target_dir="results/cooperation/Bayesian vs Bayesian2")
+    target_dir="results2/cooperation/Bayesian vs Bayesian2")
 
 # %%
 
@@ -463,7 +479,7 @@ plot_average_reward_over_time(experiment_coop_data,
                               agent1_name="Bayesian",
                               agent2_name="Monotone",
                               ma_window_size=20_000,
-                              steps=600_000,
+                              steps=60_000,
                               file_name='coop Bayesian vs Bayesian')
 
 # %%
@@ -476,7 +492,7 @@ agent2_experiment1_strategies_over_time = experiment_coop_data[:, :, 7:10]
 plot_strategy_over_time_single_agent(
     agent1_experiment1_strategies_over_time,
     title="Bayesian agent1 strategy evolution",
-    steps=600_000,
+    steps=60_000,
     ma_window_size=20_000,
     file_name="coop Bayesian vs Bayesian agent1 actions")
 
@@ -485,6 +501,6 @@ plot_strategy_over_time_single_agent(
     ma_window_size=20_000,
     title="Bayesian agent2 strategy evolution",
     file_name="coop Bayesian vs Bayesian agent2 actions",
-    steps=600_000)
+    steps=60_000)
 
 # %%
