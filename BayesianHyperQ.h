@@ -28,19 +28,24 @@ public:
         return {strategy_to_action(x), x, value};
     }
 
-    void observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) override {
+    double observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) override {
         (void) true_y;
         auto x_index = strategy_to_index(x);
 
         update_posterior(action_y);
 
         auto max = greedy().second;
+        auto sum = 0.0;
         for (StrategyIndex y_index = 0; y_index < num_strategies; ++y_index) {
             if (!valid_index(y_index)) continue;
             auto index = strategies_to_index({x_index, y_index});
 
-            hyper_q_table[index] += alpha * posterior_table[y_index] * (r + gamma * max - hyper_q_table[index]);
+            auto bellman_error = posterior_table[y_index] * (r + gamma * max - hyper_q_table[index]);
+            hyper_q_table[index] += alpha * bellman_error;
+            sum += bellman_error;
         }
+
+        return sum;
     }
 
     std::tuple<Action, Strategy, Reward> random_restart() override {

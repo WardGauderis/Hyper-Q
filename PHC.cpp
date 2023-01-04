@@ -75,7 +75,7 @@ std::tuple<Action, Strategy, Reward> PHC::act() {
     }
 }
 
-void PHC::observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) {
+double PHC::observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) {
     // silence unused parameters.
     (void)x;
     (void)true_y;
@@ -121,4 +121,6 @@ void PHC::observe(Reward r, Action action_x, Strategy x, Action action_y, Strate
 
     // update current state.
     current_state = next_state;
+
+    return NAN;
 }
