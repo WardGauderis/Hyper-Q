@@ -16,7 +16,7 @@
 #include <memory>
 
 //std::string ROOT = R"(./results analysis/results/)";
-std::string ROOT = R"(C:\GitHub\Hyper-Q\results analysis\results2\)";
+std::string ROOT = R"(C:\GitHub\Hyper-Q\results analysis\results3\)";
 
 void run_test(const std::string &output_file,
               const unsigned int steps,
@@ -86,39 +86,39 @@ int extension() {
     unsigned int steps = 600000;
 
     // EMA vs EMA: COOP
-//    for (int i = 0; i < experiments; i++) {
-//        std::cout << "Experiment " << i << std::endl;
-//
-//        srand(static_cast<unsigned int>(i));
-//        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-//        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-//
-//
-//        std::stringstream output_file;
-//        output_file << ROOT
-//                    << R"(cooperation\EMA vs EMA\experiment_)"
-//                    << i
-//                    << ".txt";
-//
-//        // Run the test and store the output in the output file
-//        run_test(output_file.str(), static_cast<unsigned int>(steps), game, agent_x, agent_y);
-//    }
+    for (int i = 0; i < experiments; i++) {
+        std::cout << "Experiment " << i << std::endl;
 
-//    // Omniscient vs Omniscient: COOP
-//    for (int i = 0; i < experiments; i++) {
-//        srand(static_cast<unsigned int>(i));
-//        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-//        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-//
-//        std::stringstream output_file;
-//        output_file << ROOT
-//                    << R"(cooperation\Omniscient vs Omniscient\experiment_)"
-//                    << i
-//                    << ".txt";
-//
-//        // Run the test and store the output in the output file
-//        run_test(output_file.str(), static_cast<unsigned int>(steps), game, agent_x, agent_y);
-//    }
+        srand(static_cast<unsigned int>(i));
+        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+
+
+        std::stringstream output_file;
+        output_file << ROOT
+                    << R"(cooperation\EMA vs EMA\experiment_)"
+                    << i
+                    << ".txt";
+
+        // Run the test and store the output in the output file
+        run_test(output_file.str(), static_cast<unsigned int>(steps), game, agent_x, agent_y);
+    }
+
+    // Omniscient vs Omniscient: COOP
+    for (int i = 0; i < experiments; i++) {
+        srand(static_cast<unsigned int>(i));
+        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+        std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+
+        std::stringstream output_file;
+        output_file << ROOT
+                    << R"(cooperation\Omniscient vs Omniscient\experiment_)"
+                    << i
+                    << ".txt";
+
+        // Run the test and store the output in the output file
+        run_test(output_file.str(), static_cast<unsigned int>(steps), game, agent_x, agent_y);
+    }
 
     // Bayesian vs Bayesian: COOP
     for (int i = 0; i < 3; i++) {
@@ -215,7 +215,7 @@ int main() {
 //    exit(0);
 
 
-    if (false) {
+    if (true) {
         // Bayesian Hyper-Q vs monotone
         for (int i = 0; i < 3; i++) {
 
@@ -234,7 +234,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // Bayesian Hyper-Q vs monotone
         for (int i = 0; i < 3; i++) {
 
@@ -253,7 +253,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // Omniscient vs monotone
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
@@ -270,7 +270,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // EMA vs monotone
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
@@ -288,7 +288,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // PHC vs monotone
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
@@ -307,7 +307,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // IGA vs monotone
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
@@ -336,11 +336,11 @@ int main() {
     // PHC VS Omniscient
     // PHC VS EMA
 
-    if (false) {
+    if (true) {
         // PHC vs Bayesian Hyper-Q
         for (int i = 0; i < 3; i++) {
 
-            srand(static_cast<unsigned int>(time(nullptr)));
+            srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
             std::unique_ptr<Agent> agent_y = std::make_unique<BayesianUltraQ>(alpha, gamma, mu);
 
@@ -357,7 +357,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // PHC vs Bayesian Hyper-Q
         for (int i = 0; i < 3; i++) {
 
@@ -377,7 +377,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // PHC vs EMA Hyper-Q
         for (int i = 0; i < 20; i++) {
             srand(static_cast<unsigned int>(i));
@@ -394,7 +394,7 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // PHC vs Omniscient Hyper-Q
         for (int i = 0; i < 20; i++) {
             srand(static_cast<unsigned int>(i));
@@ -424,7 +424,7 @@ int main() {
     // IGA VS Omniscient
     // IGA VS EMA
 
-    if (false) {
+    if (true) {
         // IGA vs Bayesian Hyper-Q
         for (int i = 0; i < 3; i++) {
 
@@ -443,11 +443,11 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // IGA vs Bayesian Hyper-Q
         for (int i = 0; i < 3; i++) {
 
-            srand(static_cast<unsigned int>(time(nullptr)));
+            srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
             std::unique_ptr<Agent> agent_y = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
 
@@ -463,11 +463,11 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // IGA vs EMA Hyper-Q
         for (int i = 0; i < 20; i++) {
 
-            srand(static_cast<unsigned int>(time(nullptr)));
+            srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
             std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
 
@@ -483,11 +483,11 @@ int main() {
         }
     }
 
-    if (false) {
+    if (true) {
         // IGA vs Omniscient Hyper-Q
         for (int i = 0; i < 20; i++) {
 
-            srand(static_cast<unsigned int>(time(nullptr)));
+            srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
             std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
 
