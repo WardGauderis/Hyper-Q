@@ -29,7 +29,6 @@ public:
                 for (unsigned int i = 0; i < x.size(); ++i) {
                     similarity += x[i] * original_x[i];
                 }
-                similarity = std::sqrt(similarity);
 
                 auto bellman_error = similarity * posterior_table[y_index] * (r + gamma * max - hyper_q_table[index]);
                 hyper_q_table[index] += alpha * bellman_error;
