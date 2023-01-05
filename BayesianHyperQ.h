@@ -20,7 +20,7 @@ public:
         for (auto &posterior: posterior_table) {
             posterior = 1.0 / num_strategies;
         }
-        hyper_q_table.fill(1);
+        hyper_q_table.fill(10);
     }
 
     std::tuple<Action, Strategy, Reward> act() override {
@@ -49,11 +49,6 @@ public:
     }
 
     std::tuple<Action, Strategy, Reward> random_restart() override {
-        history.clear();
-        for (auto &posterior: posterior_table) {
-            posterior = 1.0 / num_strategies;
-        }
-
         auto [action_x, x, reward] = Agent::random_restart();
         auto value = 0.0;
 

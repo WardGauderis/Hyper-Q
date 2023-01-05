@@ -33,6 +33,7 @@ void run_test(const std::string &output_file,
     output.open(output_file);
 
     double average_reward_x = 0.0, average_reward_y = 0.0;
+    double average_bellman_error_x = 0.0, average_bellman_error_y = 0.0;
 
     for (unsigned int i = 0; i < steps; i++) {
         Action action_x, action_y;
@@ -41,15 +42,11 @@ void run_test(const std::string &output_file,
 
         if (i % 1000 == 0) {
             std::tie(action_x, strategy_x, value_x) = agent_x->random_restart();
-        } else {
-            std::tie(action_x, strategy_x, value_x) = agent_x->act();
-        }
-        if (i % 1000 == 500) {
             std::tie(action_y, strategy_y, value_y) = agent_y->random_restart();
         } else {
+            std::tie(action_x, strategy_x, value_x) = agent_x->act();
             std::tie(action_y, strategy_y, value_y) = agent_y->act();
         }
-
         auto [reward_x, reward_y] = game->step(action_x, action_y);
 
         average_reward_x += (reward_x - average_reward_x) / (i + 1);
@@ -57,6 +54,12 @@ void run_test(const std::string &output_file,
 
         auto bellman_error_x = agent_x->observe(reward_x, action_x, strategy_x, action_y, strategy_y);
         auto bellman_error_y = agent_y->observe(reward_y, action_y, strategy_y, action_x, strategy_x);
+
+        average_bellman_error_x += (std::abs(bellman_error_x) - average_bellman_error_x) / (i + 1);
+        average_bellman_error_y += (std::abs(bellman_error_y) - average_bellman_error_y) / (i + 1);
+
+//        average_bellman_error_x = 0.05 * std::abs(bellman_error_x) + 0.95 * average_bellman_error_x;
+//        average_bellman_error_y = 0.05 * std::abs(bellman_error_y) + 0.95 * average_bellman_error_y;
 
         if (i % log_every == 0) {
             output << action_x << " " << action_y << " " << reward_x << " " << reward_y << " "
@@ -68,9 +71,9 @@ void run_test(const std::string &output_file,
         if (i % 100000 == 1) {
             std::cout << "Step " << i << std::endl;
             std::cout << "Strategy x: " << strategy_x[0] << " " << strategy_x[1] << " " << strategy_x[2] << " Bellman: "
-                      << bellman_error_x << " Reward: " << average_reward_x <<  std::endl;
+                      << average_bellman_error_x << " Reward: " << average_reward_x <<  std::endl;
             std::cout << "Strategy y: " << strategy_y[0] << " " << strategy_y[1] << " " << strategy_y[2] << " Bellman: "
-                      << bellman_error_y << " Reward: " << average_reward_y <<  std::endl;
+                      << average_bellman_error_y << " Reward: " << average_reward_y <<  std::endl;
         }
     }
 }
@@ -78,8 +81,8 @@ void run_test(const std::string &output_file,
 int extension() {
     std::unique_ptr<Game> game = std::make_unique<CooperationGame>();
 
-    auto gamma = 0.95;
-    auto alpha = 0.05;
+    auto gamma = 0.9;
+    auto alpha = 0.01;
     auto mu = 0.005;
 
     auto experiments = 20;
@@ -160,8 +163,8 @@ int main() {
 
     std::unique_ptr<Game> game = std::make_unique<RockPaperScissors>();
 
-    auto gamma = 0.95;
-    auto alpha = 0.05;
+    auto gamma = 0.9;
+    auto alpha = 0.01;
     auto mu = 0.005;
 
     auto delta = 0.01;
@@ -181,8 +184,9 @@ int main() {
 //    for (int i = 0; i < 1; i++) {
 //
 //        srand(static_cast<unsigned int>(99));
-//        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-////        std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+////        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+////        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+//        std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
 ////        std::unique_ptr<Agent> agent_y = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
 ////        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{1, 0, 0});
 //        std::unique_ptr<Agent> agent_y = std::make_unique<IGA>(step_size);
@@ -195,25 +199,6 @@ int main() {
 //
 //    }
 //    exit(0);
-
-
-//    for (int i = 0; i < 1; i++) {
-//
-//        srand(static_cast<unsigned int>(i));
-//        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-////        std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
-//        std::unique_ptr<Agent> agent_y = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
-////        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 1, 0});
-//
-//        std::stringstream output_file;
-//        output_file << "output.txt";
-//
-//        // Run the test and store the output in the output file
-//        run_test(output_file.str(), 1500000, game, agent_x, agent_y);
-//
-//    }
-//    exit(0);
-
 
     if (true) {
         // Bayesian Hyper-Q vs monotone

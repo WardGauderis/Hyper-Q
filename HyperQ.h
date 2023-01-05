@@ -16,7 +16,7 @@ class HyperQ : public Agent {
 public:
     HyperQ(std::unique_ptr<StrategyEstimation> estimation, double alpha, double gamma) : estimation(
             std::move(estimation)), alpha(alpha), gamma(gamma) {
-        hyper_q_table.fill(1);
+        hyper_q_table.fill(10);
     }
 
     std::tuple<Action, Strategy, Reward> act() override {
@@ -25,14 +25,14 @@ public:
     }
 
     double observe(Reward r, Action action_x, Strategy x, Action action_y, Strategy true_y) override {
+        estimation->observe(action_y, true_y);
+
         auto y = estimation->estimate();
 
         auto x_index = strategy_to_index(x);
         auto y_index = strategy_to_index(y);
 
         auto index = strategies_to_index({x_index, y_index});
-
-        estimation->observe(action_y, true_y);
 
         auto max = greedy().second;
         auto bellman_error = r + gamma * max - hyper_q_table[index];
@@ -42,7 +42,6 @@ public:
     }
 
     std::tuple<Action, Strategy, Reward> random_restart() override {
-        estimation->random_restart();
         auto [action_x, x, reward] = Agent::random_restart();
         auto y = estimation->estimate();
         auto y_index = strategy_to_index(y);
