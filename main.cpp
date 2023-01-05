@@ -65,7 +65,7 @@ void run_test(const std::string &output_file,
                    << bellman_error_x << " " << bellman_error_y << "\n";
         }
 
-        if (i % 10000 == 1) {
+        if (i % 100000 == 1) {
             std::cout << "Step " << i << std::endl;
             std::cout << "Strategy x: " << strategy_x[0] << " " << strategy_x[1] << " " << strategy_x[2] << " Bellman: "
                       << bellman_error_x << " Reward: " << average_reward_x <<  std::endl;

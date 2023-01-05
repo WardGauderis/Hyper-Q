@@ -10,7 +10,7 @@ plt.rcParams["figure.figsize"] = (10, 8)
 # %%
 
 
-def load_experiment_data(target_dir="results2/EMA vs monotone"):
+def load_experiment_data(target_dir="results3/EMA vs monotone"):
     # Create an empty list to store the data from each file
     all_data = []
 
@@ -209,10 +209,10 @@ ACTIONS_PLAYER_Y_STARTING_IDX = 7
 # **********************************************
 
 ################ IGA VS Omniscient, EMA, Bayesian  ###############
-omniscient_experiment_data = load_experiment_data(target_dir="results2/IGA vs omniscient")
-EMA_experiment_data = load_experiment_data(target_dir="results2/IGA vs EMA")
-Bayesian_experiment_data = load_experiment_data(target_dir="results2/IGA vs Bayesian")
-Bayesian_ultra_experiment_data = load_experiment_data(target_dir="results2/IGA vs Bayesian ultra")
+omniscient_experiment_data = load_experiment_data(target_dir="results3/IGA vs omniscient")
+EMA_experiment_data = load_experiment_data(target_dir="results3/IGA vs EMA")
+Bayesian_experiment_data = load_experiment_data(target_dir="results3/IGA vs Bayesian")
+Bayesian_ultra_experiment_data = load_experiment_data(target_dir="results3/IGA vs Bayesian ultra")
 
 # %%
 
@@ -234,10 +234,10 @@ plot_average_reward_hyperq_vs_other([omniscient_experiment_data,
 
 # %%
 
-omniscient_experiment_data = load_experiment_data(target_dir="results2/PHC vs omniscient")
-EMA_experiment_data = load_experiment_data(target_dir="results2/PHC vs EMA")
-Bayesian_experiment_data = load_experiment_data(target_dir="results2/PHC vs Bayesian")
-Bayesian_ultra_experiment_data = load_experiment_data(target_dir="results2/PHC vs Bayesian ultra")
+omniscient_experiment_data = load_experiment_data(target_dir="results3/PHC vs omniscient")
+EMA_experiment_data = load_experiment_data(target_dir="results3/PHC vs EMA")
+Bayesian_experiment_data = load_experiment_data(target_dir="results3/PHC vs Bayesian")
+Bayesian_ultra_experiment_data = load_experiment_data(target_dir="results3/PHC vs Bayesian ultra")
 
 # %%
 
@@ -262,12 +262,12 @@ plot_average_reward_hyperq_vs_other([
 
 
 ################ PHC, IGA, Omniscient, EMA, Bayesian vs monotone ###############
-experiment_vs_monotone1 = load_experiment_data(target_dir="results2/PHC vs monotone")
-experiment_vs_monotone2 = load_experiment_data(target_dir="results2/IGA vs monotone")
-experiment_vs_monotone3 = load_experiment_data(target_dir="results2/Omniscient vs monotone")
-experiment_vs_monotone4 = load_experiment_data(target_dir="results2/EMA vs monotone")
-experiment_vs_monotone5 = load_experiment_data(target_dir="results2/Bayesian vs monotone")
-experiment_vs_monotone6 = load_experiment_data(target_dir="results2/Bayesian ultra vs monotone")
+experiment_vs_monotone1 = load_experiment_data(target_dir="results3/PHC vs monotone")
+experiment_vs_monotone2 = load_experiment_data(target_dir="results3/IGA vs monotone")
+experiment_vs_monotone3 = load_experiment_data(target_dir="results3/Omniscient vs monotone")
+experiment_vs_monotone4 = load_experiment_data(target_dir="results3/EMA vs monotone")
+experiment_vs_monotone5 = load_experiment_data(target_dir="results3/Bayesian vs monotone")
+experiment_vs_monotone6 = load_experiment_data(target_dir="results3/Bayesian ultra vs monotone")
 
 # %%
 
@@ -313,10 +313,10 @@ plot_average_reward_hyperq_vs_other([
 
 # %% Rewards
 
-omniscient_experiment_data = load_experiment_data(target_dir="results2/cooperation/Omniscient vs Omniscient")
-EMA_experiment_data = load_experiment_data(target_dir="results2/cooperation/EMA vs EMA")
-Bayesian_experiment_data = load_experiment_data(target_dir="results2/cooperation/Bayesian vs Bayesian")
-Bayesian_ultra_experiment_data = load_experiment_data(target_dir="results2/cooperation/Bayesian ultra vs Bayesian ultra")
+omniscient_experiment_data = load_experiment_data(target_dir="results3/cooperation/Omniscient vs Omniscient")
+EMA_experiment_data = load_experiment_data(target_dir="results3/cooperation/EMA vs EMA")
+Bayesian_experiment_data = load_experiment_data(target_dir="results3/cooperation/Bayesian vs Bayesian")
+Bayesian_ultra_experiment_data = load_experiment_data(target_dir="results3/cooperation/Bayesian ultra vs Bayesian ultra")
 
 
 # %%
@@ -393,7 +393,7 @@ assert False
 ################ PHC VS MONOTONE ###############
 
 
-experiment_data = load_experiment_data(target_dir="results2/PHC vs monotone")
+experiment_data = load_experiment_data(target_dir="results3/PHC vs monotone")
 
 plot_average_reward_over_time(experiment_data,
                               title="PHC vs Monotone",
@@ -417,7 +417,7 @@ plot_strategy_over_time_single_agent(
 ################ IGA VS MONOTONE ###############
 
 
-experiment_data = load_experiment_data(target_dir="results2/IGA vs monotone")
+experiment_data = load_experiment_data(target_dir="results3/IGA vs monotone")
 
 # %%
 
@@ -435,7 +435,7 @@ plot_average_reward_over_time(experiment_data,
 ################ EMA VS MONOTONE ###############
 
 
-experiment_data = load_experiment_data(target_dir="results2/EMA vs monotone")
+experiment_data = load_experiment_data(target_dir="results3/EMA vs monotone")
 
 # %%
 
@@ -459,7 +459,7 @@ plot_average_reward_over_time(
 
 ################ OMNISCIENT VS MONOTONE ###############
 
-# experiment_data2 = load_experiment_data(target_dir="results2/Omniscient vs monotone")
+# experiment_data2 = load_experiment_data(target_dir="results3/Omniscient vs monotone")
 
 # plot_average_reward_over_time(experiment_data2, title="Omniscient vs Monotone", agent1_name="Omniscient", agent2_name="Monotone",
 #                               steps=50)
@@ -485,7 +485,7 @@ plot_average_reward_over_time(
 # **********************************************
 ################# OMNISCIENT ####################
 experiment_coop_data = load_experiment_data(
-    target_dir="results2/cooperation/Omniscient vs Omniscient")
+    target_dir="results3/cooperation/Omniscient vs Omniscient")
 
 # %%
 
@@ -520,7 +520,7 @@ plot_strategy_over_time_single_agent(
 
 ################# EMA ####################
 experiment_coop_data = load_experiment_data(
-    target_dir="results2/cooperation/EMA vs EMA")
+    target_dir="results3/cooperation/EMA vs EMA")
 
 # %%
 
@@ -555,7 +555,7 @@ plot_strategy_over_time_single_agent(
 
 ################# Bayesian ##################
 experiment_coop_data = load_experiment_data(
-    target_dir="results2/cooperation/Bayesian vs Bayesian2")
+    target_dir="results3/cooperation/Bayesian vs Bayesian2")
 
 # %%
 
