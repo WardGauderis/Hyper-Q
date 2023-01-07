@@ -15,8 +15,8 @@
 
 #include <memory>
 
-//std::string ROOT = R"(./results analysis/results/)";
-std::string ROOT = R"(C:\GitHub\Hyper-Q\results analysis\results3\)";
+std::string ROOT = R"(./results analysis/results3/)";
+//std::string ROOT = R"(C:/GitHub/Hyper-Q/results analysis/results3/)";
 
 void run_test(const std::string &output_file,
               const unsigned int steps,
@@ -55,21 +55,21 @@ void run_test(const std::string &output_file,
         auto bellman_error_x = agent_x->observe(reward_x, action_x, strategy_x, action_y, strategy_y);
         auto bellman_error_y = agent_y->observe(reward_y, action_y, strategy_y, action_x, strategy_x);
 
-        average_bellman_error_x += (std::abs(bellman_error_x) - average_bellman_error_x) / (i + 1);
-        average_bellman_error_y += (std::abs(bellman_error_y) - average_bellman_error_y) / (i + 1);
+//        average_bellman_error_x += (bellman_error_x - average_bellman_error_x) / (i + 1);
+//        average_bellman_error_y += (bellman_error_y - average_bellman_error_y) / (i + 1);
 
-//        average_bellman_error_x = 0.05 * std::abs(bellman_error_x) + 0.95 * average_bellman_error_x;
-//        average_bellman_error_y = 0.05 * std::abs(bellman_error_y) + 0.95 * average_bellman_error_y;
+        average_bellman_error_x = 0.05 * bellman_error_x + 0.95 * average_bellman_error_x;
+        average_bellman_error_y = 0.05 * bellman_error_y + 0.95 * average_bellman_error_y;
 
-        if (i % log_every == 0) {
+        if (i % log_every == log_every-1) {
             output << action_x << " " << action_y << " " << reward_x << " " << reward_y << " "
                    << strategy_x[0] << " " << strategy_x[1] << " " << strategy_x[2] << " "
                    << strategy_y[0] << " " << strategy_y[1] << " " << strategy_y[2] << " "
                    << bellman_error_x << " " << bellman_error_y << "\n";
         }
 
-        if (i % 100000 == 1) {
-            std::cout << "Step " << i << std::endl;
+        if (i % 100000 == 100000-1) {
+            std::cout << "Step " << i << ", output: " << output_file << std::endl;
             std::cout << "Strategy x: " << strategy_x[0] << " " << strategy_x[1] << " " << strategy_x[2] << " Bellman: "
                       << average_bellman_error_x << " Reward: " << average_reward_x <<  std::endl;
             std::cout << "Strategy y: " << strategy_y[0] << " " << strategy_y[1] << " " << strategy_y[2] << " Bellman: "
@@ -85,10 +85,11 @@ int extension() {
     auto alpha = 0.01;
     auto mu = 0.005;
 
-    auto experiments = 20;
+    auto experiments = 15;
     unsigned int steps = 600000;
 
     // EMA vs EMA: COOP
+    #pragma omp parallel for
     for (int i = 0; i < experiments; i++) {
         std::cout << "Experiment " << i << std::endl;
 
@@ -99,7 +100,7 @@ int extension() {
 
         std::stringstream output_file;
         output_file << ROOT
-                    << R"(cooperation\EMA vs EMA\experiment_)"
+                    << R"(cooperation/EMA vs EMA/experiment_)"
                     << i
                     << ".txt";
 
@@ -108,6 +109,7 @@ int extension() {
     }
 
     // Omniscient vs Omniscient: COOP
+    #pragma omp parallel for
     for (int i = 0; i < experiments; i++) {
         srand(static_cast<unsigned int>(i));
         std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
@@ -115,7 +117,7 @@ int extension() {
 
         std::stringstream output_file;
         output_file << ROOT
-                    << R"(cooperation\Omniscient vs Omniscient\experiment_)"
+                    << R"(cooperation/Omniscient vs Omniscient/experiment_)"
                     << i
                     << ".txt";
 
@@ -124,14 +126,15 @@ int extension() {
     }
 
     // Bayesian vs Bayesian: COOP
-    for (int i = 0; i < 3; i++) {
+    #pragma omp parallel for
+    for (int i = 0; i < experiments/3; i++) {
         srand(static_cast<unsigned int>(i));
         std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
         std::unique_ptr<Agent> agent_y = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
 
         std::stringstream output_file;
         output_file << ROOT
-                    << R"(cooperation\Bayesian vs Bayesian\experiment_)"
+                    << R"(cooperation/Bayesian vs Bayesian/experiment_)"
                     << i
                     << ".txt";
 
@@ -140,7 +143,8 @@ int extension() {
     }
 
     // Bayesian ultra vs Bayesian ultra: COOP
-    for (int i = 0; i < 3; i++) {
+    #pragma omp parallel for
+    for (int i = 0; i < experiments/3; i++) {
         srand(static_cast<unsigned int>(i));
         std::unique_ptr<Agent> agent_x = std::make_unique<BayesianUltraQ>(alpha, gamma, mu);
         std::unique_ptr<Agent> agent_y = std::make_unique<BayesianUltraQ>(alpha, gamma, mu);
@@ -148,7 +152,7 @@ int extension() {
 
         std::stringstream output_file;
         output_file << ROOT
-                    << R"(cooperation\Bayesian ultra vs Bayesian ultra\experiment_)"
+                    << R"(cooperation/Bayesian ultra vs Bayesian ultra/experiment_)"
                     << i
                     << ".txt";
 
@@ -169,10 +173,10 @@ int main() {
 
     auto delta = 0.01;
     auto epsilon = 0.01;
-    auto step_size = 0.01;
+    auto step_size = 0.0001;
 
-    auto experiments = 20;
-    unsigned int steps = 600000;
+    auto experiments = 15;
+    unsigned int steps = 1200000;
 
     // Bayes ultra vs monotone
     // Bayes vs monotone
@@ -180,66 +184,38 @@ int main() {
     // EMA vs monotone
     // PHC vs monotone
     // IGA vs monotone
+/* 
+    for (int i = 0; i < 1; i++) {
 
-//    for (int i = 0; i < 1; i++) {
-//
-//        srand(static_cast<unsigned int>(99));
-////        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-////        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-//        std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
-////        std::unique_ptr<Agent> agent_y = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
-////        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{1, 0, 0});
-//        std::unique_ptr<Agent> agent_y = std::make_unique<IGA>(step_size);
-//
-//        std::stringstream output_file;
-//        output_file << "output.txt";
-//
-//        // Run the test and store the output in the output file
-//        run_test(output_file.str(), 1500000, game, agent_x, agent_y);
-//
-//    }
-//    exit(0);
+        srand(static_cast<unsigned int>(99));
+        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
+        std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+        std::unique_ptr<Agent> agent_y = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
+        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0.7, 0.15, 0.15});
+        std::unique_ptr<Agent> agent_y = std::make_unique<IGA>(step_size); 
 
-    if (true) {
-        // Bayesian Hyper-Q vs monotone
-        for (int i = 0; i < 3; i++) {
+        std::stringstream output_file;
+        output_file << "output.txt";
 
-            srand(static_cast<unsigned int>(i));
-            std::unique_ptr<Agent> agent_x = std::make_unique<BayesianUltraQ>(alpha, gamma, mu);
-            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 1, 0});
+        // Run the test and store the output in the output file
+        run_test(output_file.str(), 1500000, game, agent_x, agent_y);
 
-            std::stringstream output_file;
-            output_file << ROOT
-                        << R"(Bayesian ultra vs monotone/experiment_)" << i
-                        << ".txt";
-
-            // Run the test and store the output in the output file
-            run_test(output_file.str(), steps, game, agent_x, agent_y);
-
-        }
     }
+    exit(0);
+     */
 
-    if (true) {
-        // Bayesian Hyper-Q vs monotone
-        for (int i = 0; i < 3; i++) {
 
-            srand(static_cast<unsigned int>(i));
-            std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
-            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 1, 0});
-
-            std::stringstream output_file;
-            output_file << ROOT
-                        << R"(Bayesian vs monotone/experiment_)" << i
-                        << ".txt";
-
-            // Run the test and store the output in the output file
-            run_test(output_file.str(), steps, game, agent_x, agent_y);
-
-        }
-    }
-
-    if (true) {
+    // Omnicient VS monotone
+    // EMA VS monotone
+    // PHC VS monotone
+    // PHC VS EMA
+    // Ultra-Q VS monotone
+    // Hyper-Q VS monotone
+    
+    if (false) {
         // Omniscient vs monotone
+        #pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
@@ -255,8 +231,9 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // EMA vs monotone
+        #pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
@@ -273,8 +250,9 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // PHC vs monotone
+        #pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
@@ -291,9 +269,10 @@ int main() {
 
         }
     }
-
-    if (true) {
+    
+    if (false) {
         // IGA vs monotone
+        #pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
@@ -310,7 +289,45 @@ int main() {
         }
     }
 
+    if (false) {
+        // Bayesian Ultra-Q vs monotone 
+        #pragma omp parallel for
+        for (int i = 0; i < experiments/3; i++) {
 
+            srand(static_cast<unsigned int>(i));
+            std::unique_ptr<Agent> agent_x = std::make_unique<BayesianUltraQ>(alpha, gamma, mu);
+            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 1, 0});
+
+            std::stringstream output_file;
+            output_file << ROOT
+                        << R"(Bayesian ultra vs monotone/experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
+
+        }
+    }
+
+    if (false) {
+        // Bayesian Hyper-Q vs monotone
+        #pragma omp parallel for
+        for (int i = 0; i < experiments/3; i++) {
+
+            srand(static_cast<unsigned int>(i));
+            std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+            std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0, 1, 0});
+
+            std::stringstream output_file;
+            output_file << ROOT
+                        << R"(Bayesian vs monotone/experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
+
+        }
+    }
 
 
 
@@ -321,9 +338,10 @@ int main() {
     // PHC VS Omniscient
     // PHC VS EMA
 
-    if (true) {
-        // PHC vs Bayesian Hyper-Q
-        for (int i = 0; i < 3; i++) {
+    if (false) {
+        // PHC vs Bayesian Ultra-Q
+        #pragma omp parallel for
+        for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
@@ -341,10 +359,11 @@ int main() {
 
         }
     }
-
-    if (true) {
+    
+    if (false) {
         // PHC vs Bayesian Hyper-Q
-        for (int i = 0; i < 3; i++) {
+        #pragma omp parallel for
+        for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(time(nullptr)));
             std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
@@ -362,9 +381,10 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // PHC vs EMA Hyper-Q
-        for (int i = 0; i < 20; i++) {
+        #pragma omp parallel for
+        for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
             std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
@@ -379,9 +399,10 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // PHC vs Omniscient Hyper-Q
-        for (int i = 0; i < 20; i++) {
+        #pragma omp parallel for
+        for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
             std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
@@ -409,9 +430,10 @@ int main() {
     // IGA VS Omniscient
     // IGA VS EMA
 
-    if (true) {
+    if (false) {
         // IGA vs Bayesian Hyper-Q
-        for (int i = 0; i < 3; i++) {
+        #pragma omp parallel for
+        for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(time(nullptr)));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
@@ -428,9 +450,10 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // IGA vs Bayesian Hyper-Q
-        for (int i = 0; i < 3; i++) {
+        #pragma omp parallel for
+        for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
@@ -448,9 +471,10 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // IGA vs EMA Hyper-Q
-        for (int i = 0; i < 20; i++) {
+        #pragma omp parallel for
+        for (int i = 0; i < experiments; i++) {
 
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
@@ -468,9 +492,10 @@ int main() {
         }
     }
 
-    if (true) {
+    if (false) {
         // IGA vs Omniscient Hyper-Q
-        for (int i = 0; i < 20; i++) {
+        #pragma omp parallel for
+        for (int i = 0; i < experiments; i++) {
 
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
@@ -487,15 +512,8 @@ int main() {
         }
     }
 
-
-
-
-
-
-
-    if (true)
-        extension();
-
+    
+    if (true) { extension(); }
 
     return 0;
 }

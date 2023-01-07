@@ -63,6 +63,10 @@ Strategy Agent::index_to_strategy(StrategyIndex index) {
 }
 
 StrategyIndex Agent::strategy_to_index(Strategy strategy) {
+    assert(strategy[0] >= 0 && strategy[0] <=1);
+    assert(strategy[1] >= 0 && strategy[1] <=1);
+    assert(strategy[2] >= 0 && strategy[2] <=1);
+    
     assert(std::abs(std::accumulate(strategy.begin(), strategy.end(), 0.0) - 1.0) < 1e-6);
 
     const auto sum = grid_size - 1;

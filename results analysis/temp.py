@@ -229,7 +229,7 @@ plot_average_reward_hyperq_vs_other([omniscient_experiment_data,
                                     ma_window_sizes=[5000, 5000, 5000, 5000],
                                     symmetrical_reward=True,
                                     agent_idx=3,
-                                    steps=60_000,
+                                    steps=120_000,
                                     file_name="HyperQ vs IGA Avg reward per time step")
 
 # %%
@@ -252,7 +252,7 @@ plot_average_reward_hyperq_vs_other([
                                     ma_window_sizes=[5000, 5000, 5000, 5000],
                                     symmetrical_reward=True,
                                     agent_idx=REWARDS_PLAYER_Y,
-                                    steps=60_000,
+                                    steps=120_000,
                                     file_name="HyperQ vs PHC Avg reward per time step")
 
 
@@ -294,7 +294,7 @@ plot_average_reward_hyperq_vs_other([
                                         5000, 
                                         5000],
                                     symmetrical_reward=True,
-                                    steps=60_000,
+                                    steps=120_000,
                                     agent_idx=REWARDS_PLAYER_X,
                                     file_name="HyperQ, IGA, PHC vs monotone")
 
@@ -399,7 +399,7 @@ plot_average_reward_over_time(experiment_data,
                               title="PHC vs Monotone",
                               agent1_name="PHC",
                               agent2_name="Monotone",
-                              steps=60_000,
+                              steps=120_000,
                               file_name='PHC vs monotone',
                               symmetrical_reward=False)
 
@@ -425,7 +425,7 @@ plot_average_reward_over_time(experiment_data,
                               title="Rewards IGA vs Monotone",
                               agent1_name="IGA",
                               agent2_name="Monotone",
-                              steps=60_000,
+                              steps=120_000,
                               file_name='IGA vs monotone',
                               symmetrical_reward=False)
 

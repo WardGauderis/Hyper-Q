@@ -14,6 +14,7 @@ PHC::PHC(float alpha_, float delta_, float gamma_, float epsilon_) {
     current_state = 0;
     current_action = 0;
 
+    // q table creation.
     for (int state=0; state<9; state++) {
         for (int action=0; action<3; action++) {
             if (action==0) {
@@ -24,6 +25,7 @@ PHC::PHC(float alpha_, float delta_, float gamma_, float epsilon_) {
         }
     }
 
+    // policy table creation.
     for (int state=0; state<9; state++) {
         // probabilities 
         double p1 = static_cast<double>(rand()) / RAND_MAX;
@@ -39,7 +41,7 @@ PHC::PHC(float alpha_, float delta_, float gamma_, float epsilon_) {
 // returns greedy action according to policy.
 unsigned long PHC::greedy() {
     auto random = static_cast<double>(rand()) / RAND_MAX;
-
+/* 
     // choose action based on policy probabilities.
     double p_rock = policy_table[current_state][0];
     double p_paper = policy_table[current_state][1];
@@ -58,6 +60,10 @@ unsigned long PHC::greedy() {
         current_action = action;
         return action;
     }
+     */
+
+    auto action = Agent::strategy_to_action(policy_table[current_state]);
+    return action;
 }
 
 std::tuple<Action, Strategy, Reward> PHC::act() {
