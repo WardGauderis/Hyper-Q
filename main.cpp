@@ -89,7 +89,7 @@ int extension() {
     unsigned int steps = 600000;
 
     // EMA vs EMA: COOP
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int i = 0; i < experiments; i++) {
         std::cout << "Experiment " << i << std::endl;
 
@@ -109,7 +109,7 @@ int extension() {
     }
 
     // Omniscient vs Omniscient: COOP
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int i = 0; i < experiments; i++) {
         srand(static_cast<unsigned int>(i));
         std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
@@ -126,7 +126,7 @@ int extension() {
     }
 
     // Bayesian vs Bayesian: COOP
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int i = 0; i < experiments/3; i++) {
         srand(static_cast<unsigned int>(i));
         std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
@@ -143,7 +143,7 @@ int extension() {
     }
 
     // Bayesian ultra vs Bayesian ultra: COOP
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int i = 0; i < experiments/3; i++) {
         srand(static_cast<unsigned int>(i));
         std::unique_ptr<Agent> agent_x = std::make_unique<BayesianUltraQ>(alpha, gamma, mu);
@@ -215,7 +215,7 @@ int main() {
     
     if (false) {
         // Omniscient vs monotone
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
@@ -233,7 +233,7 @@ int main() {
 
     if (false) {
         // EMA vs monotone
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
@@ -252,7 +252,7 @@ int main() {
 
     if (false) {
         // PHC vs monotone
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
@@ -272,7 +272,7 @@ int main() {
     
     if (false) {
         // IGA vs monotone
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<IGA>(step_size);
@@ -291,7 +291,7 @@ int main() {
 
     if (false) {
         // Bayesian Ultra-Q vs monotone 
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(i));
@@ -311,7 +311,7 @@ int main() {
 
     if (false) {
         // Bayesian Hyper-Q vs monotone
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(i));
@@ -340,7 +340,7 @@ int main() {
 
     if (false) {
         // PHC vs Bayesian Ultra-Q
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(i));
@@ -362,7 +362,7 @@ int main() {
     
     if (false) {
         // PHC vs Bayesian Hyper-Q
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(time(nullptr)));
@@ -383,7 +383,7 @@ int main() {
 
     if (false) {
         // PHC vs EMA Hyper-Q
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
@@ -401,7 +401,7 @@ int main() {
 
     if (false) {
         // PHC vs Omniscient Hyper-Q
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
@@ -432,7 +432,7 @@ int main() {
 
     if (false) {
         // IGA vs Bayesian Hyper-Q
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(time(nullptr)));
@@ -452,7 +452,7 @@ int main() {
 
     if (false) {
         // IGA vs Bayesian Hyper-Q
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(i));
@@ -473,7 +473,7 @@ int main() {
 
     if (false) {
         // IGA vs EMA Hyper-Q
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
 
             srand(static_cast<unsigned int>(i));
@@ -494,7 +494,7 @@ int main() {
 
     if (false) {
         // IGA vs Omniscient Hyper-Q
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int i = 0; i < experiments; i++) {
 
             srand(static_cast<unsigned int>(i));
@@ -512,8 +512,48 @@ int main() {
         }
     }
 
+    if (true) {
+        // Omniscient vs Omniscient
+        //#pragma omp parallel for
+        for (int i = 0; i < experiments; i++) {
+
+            srand(static_cast<unsigned int>(i));
+            std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+            std::unique_ptr<Agent> agent_y = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
+
+            std::stringstream output_file;
+            output_file << ROOT
+                        << R"(Bayesian vs Bayesian/experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
+
+        }
+    }
+
+    if (true) {
+        // Bayesian vs Bayesian
+        //#pragma omp parallel for
+        for (int i = 0; i < experiments; i++) {
+
+            srand(static_cast<unsigned int>(i));
+            std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+            std::unique_ptr<Agent> agent_y = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+
+            std::stringstream output_file;
+            output_file << ROOT
+                        << R"(IGA vs omniscient/experiment_)" << i
+                        << ".txt";
+
+            // Run the test and store the output in the output file
+            run_test(output_file.str(), steps, game, agent_x, agent_y);
+
+        }
+    }
+
     
-    if (true) { extension(); }
+    if (false) { extension(); }
 
     return 0;
 }
