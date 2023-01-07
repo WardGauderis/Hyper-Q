@@ -535,7 +535,7 @@ int main() {
     if (true) {
         // Bayesian vs Bayesian
         #pragma omp parallel for
-        for (int i = 0; i < experiments; i++) {
+        for (int i = 0; i < experiments/3; i++) {
 
             srand(static_cast<unsigned int>(i));
             std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
