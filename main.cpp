@@ -543,7 +543,7 @@ int main() {
 
             std::stringstream output_file;
             output_file << ROOT
-                        << R"(IGA vs omniscient/experiment_)" << i
+                        << R"(omniscient vs omniscient/experiment_)" << i
                         << ".txt";
 
             // Run the test and store the output in the output file
