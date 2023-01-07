@@ -107,6 +107,85 @@ def plot_average_reward_over_time(experiment_data, title,
     plt.show()
 
 
+# def plot_average_reward_hyperq_vs_other(hyper_q_experiments,
+#                                         title,
+#                                         agent_names=["Omniscient",
+#                                                      "EMA", "Bayesian"],
+#                                         ma_window_sizes=[2000, 2000, 20_000],
+#                                         agent_idx=3,
+#                                         symmetrical_reward=True,
+#                                         steps=None,
+#                                         file_name=None):
+
+#     if steps is None:
+#         steps = max_steps
+    
+#     # Generate a range of indices from 0 to the length of val1 - 1
+#     time = range(steps)
+
+#     marker_styles = [
+#         '.',
+#         ',',
+#         'o',
+#         'v',
+#         '^',
+#         '<',
+#         '>',
+#         '1',
+#         '2',
+#         '3',
+#         '4',
+#         's',
+#         'p',
+#         '*'
+#     ]
+
+#     for idx, experiment_data in enumerate(hyper_q_experiments):
+#         nb_experiments, max_steps, _ = experiment_data.shape
+
+#         # mean of axis 0 -> wants seq of len t
+#         agent1_avg_rewards = np.mean(experiment_data[:, 0:steps, agent_idx], axis=0)
+
+
+
+#         # moving average
+#         ma_rewards = pd.Series(agent1_avg_rewards).rolling(
+#             ma_window_sizes[idx]).mean()
+
+#         # Create the plot using matplotlib's plot function
+#         plt.plot(time, ma_rewards,
+#                     linestyle='solid',   # set the line style to solid
+#                     color='black',       # set the line color to black
+#                     linewidth=1,         # set the line width to 1
+#                     marker=marker_styles[idx],          # set the marker style to circles
+#                     markersize=3,        # set the marker size to 3
+#                  label=f'{agent_names[idx]} MA (window size = {ma_window_sizes[idx]})')
+
+#         # Add a title, x and y labels, and a legend
+#         plt.title(title)
+#         plt.xlabel('Time')
+#         plt.ylabel('Reward')
+#         plt.legend()
+    
+#     # Multiply the time values by 10 # beacuse c++ only saves every 10 steps
+#     if (steps == 120_000):
+#         tick_positions = range(0, steps, 20000)
+#         tick_labels = [x * 10 for x in tick_positions]
+#         plt.xticks(tick_positions, tick_labels)
+#     else:
+#         tick_positions = range(0, steps, 5000)
+#         tick_labels = [x * 10 for x in tick_positions]
+#         plt.xticks(tick_positions, tick_labels)
+
+#     if file_name:
+#         plt.savefig(file_name, dpi=300, bbox_inches="tight")
+
+#     # Plot the data as before
+#     plt.show()
+
+
+
+
 def plot_average_reward_hyperq_vs_other(hyper_q_experiments,
                                         title,
                                         agent_names=["Omniscient",
@@ -123,28 +202,53 @@ def plot_average_reward_hyperq_vs_other(hyper_q_experiments,
     # Generate a range of indices from 0 to the length of val1 - 1
     time = range(steps)
 
+    marker_styles = [
+        '.',
+        ',',
+        'o',
+        'v',
+        '^',
+        '<',
+        '>',
+        '1',
+        '2',
+        '3',
+        '4',
+        's',
+        'p',
+        '*'
+    ]
+
+    subsampling_rate = 500  # plot every 10th data point
+
     for idx, experiment_data in enumerate(hyper_q_experiments):
         nb_experiments, max_steps, _ = experiment_data.shape
 
         # mean of axis 0 -> wants seq of len t
         agent1_avg_rewards = np.mean(experiment_data[:, 0:steps, agent_idx], axis=0)
 
-
-
         # moving average
         ma_rewards = pd.Series(agent1_avg_rewards).rolling(
             ma_window_sizes[idx]).mean()
 
+        # Subsample the data by only plotting every nth point
+        time_subsampled = time[::subsampling_rate]
+        ma_rewards_subsampled = ma_rewards[::subsampling_rate]
+
         # Create the plot using matplotlib's plot function
-        plt.plot(time, ma_rewards,
-                 label=f'{agent_names[idx]} MA (window size = {ma_window_sizes[idx]})')
+        plt.plot(time_subsampled, ma_rewards_subsampled,
+                    linestyle='solid',   # set the line style to solid
+                    linewidth=1,         # set the line width to 1
+                    marker=marker_styles[idx],          # set the marker style to circles
+                    markersize=5,        # set the marker size to 3
+                label=f'{agent_names[idx]} MA (window size = {ma_window_sizes[idx]})')
 
         # Add a title, x and y labels, and a legend
         plt.title(title)
         plt.xlabel('Time')
         plt.ylabel('Reward')
         plt.legend()
-    
+
     # Multiply the time values by 10 # beacuse c++ only saves every 10 steps
     if (steps == 120_000):
         tick_positions = range(0, steps, 20000)
@@ -160,6 +264,7 @@ def plot_average_reward_hyperq_vs_other(hyper_q_experiments,
 
     # Plot the data as before
     plt.show()
+
 
 
 def plot_strategy_over_time_single_agent(strategies_over_time, title, steps=None, file_name=None,  ma_window_size=2000):
