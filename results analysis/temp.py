@@ -146,9 +146,14 @@ def plot_average_reward_hyperq_vs_other(hyper_q_experiments,
         plt.legend()
     
     # Multiply the time values by 10 # beacuse c++ only saves every 10 steps
-    tick_positions = range(0, steps, 5000)
-    tick_labels = [x * 10 for x in tick_positions]
-    plt.xticks(tick_positions, tick_labels)
+    if (steps == 120_000):
+        tick_positions = range(0, steps, 20000)
+        tick_labels = [x * 10 for x in tick_positions]
+        plt.xticks(tick_positions, tick_labels)
+    else:
+        tick_positions = range(0, steps, 5000)
+        tick_labels = [x * 10 for x in tick_positions]
+        plt.xticks(tick_positions, tick_labels)
 
     if file_name:
         plt.savefig(file_name, dpi=300, bbox_inches="tight")
