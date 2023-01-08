@@ -446,7 +446,7 @@ agent2_experiment1_strategies_over_time = Bayesian_ultra_experiment_data[
 plot_strategy_over_time_single_agent(agent1_experiment1_strategies_over_time, title="Cooperation game: Bayesian ultra agent1 strategy evolution",
                                      steps=60_000, file_name="coop Bayesian ultra vs Bayesian ultra agent1 actions")
 plot_strategy_over_time_single_agent(agent2_experiment1_strategies_over_time, title="Cooperation game: Bayesian ultra agent2 strategy evolution",
-                                     file_name="coop Bayesian vs Bayesian agent2 actions", steps=60_000)
+                                     file_name="coop Bayesian ultra vs Bayesian ultra agent2 actions", steps=60_000)
 
 # %%
 
