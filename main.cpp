@@ -184,27 +184,6 @@ int main() {
     // EMA vs monotone
     // PHC vs monotone
     // IGA vs monotone
-/* 
-    for (int i = 0; i < 1; i++) {
-
-        srand(static_cast<unsigned int>(99));
-        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<Omniscient>(), alpha, gamma);
-        std::unique_ptr<Agent> agent_x = std::make_unique<HyperQ>(std::make_unique<EMA>(mu), alpha, gamma);
-        std::unique_ptr<Agent> agent_x = std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
-        std::unique_ptr<Agent> agent_y = std::make_unique<PHC>(alpha, delta, gamma, epsilon);
-        std::unique_ptr<Agent> agent_y = std::make_unique<Monotone>(Strategy{0.7, 0.15, 0.15});
-        std::unique_ptr<Agent> agent_y = std::make_unique<IGA>(step_size); 
-
-        std::stringstream output_file;
-        output_file << "output.txt";
-
-        // Run the test and store the output in the output file
-        run_test(output_file.str(), 1500000, game, agent_x, agent_y);
-
-    }
-    exit(0);
-     */
-
 
     // Omnicient VS monotone
     // EMA VS monotone
