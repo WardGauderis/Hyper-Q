@@ -9,3 +9,4 @@ CMakeFiles
 results analysis/results/
 results analysis/results2/
 results analysis/results*/
+.DS_Store
