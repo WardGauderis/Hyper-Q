@@ -6,6 +6,7 @@
 #define HYPER_Q_OMNISCIENT_H
 
 #include "StrategyEstimation.h"
+#include "../agent/Agent.h"
 
 class Omniscient : public StrategyEstimation {
 public:

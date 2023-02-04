@@ -5,13 +5,20 @@
 #ifndef HYPER_Q_GAME_H
 #define HYPER_Q_GAME_H
 
-#include "Definitions.h"
+#include "../utils/Definitions.h"
+
+#include "../utils/json.hpp"
+
+using json = nlohmann::json;
+
 
 class Game {
 public:
     virtual Rewards step(Action action_x, Action action_y) = 0;
 
     virtual ~Game() = default;
+
+    static std::unique_ptr<Game> from_json(const json &j);
 };
 
 

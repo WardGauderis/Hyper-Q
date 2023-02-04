@@ -7,6 +7,14 @@
 #include <cstdlib>
 #include <cmath>
 #include "Agent.h"
+#include "Monotone.h"
+#include "BayesianHyperQ.h"
+#include "HyperQ.h"
+#include "BayesianUltraQ.h"
+#include "IGA.h"
+#include "PHC.h"
+#include "../estimation/Omniscient.h"
+#include "../estimation/EMA.h"
 
 Strategy Agent::random_strategy() {
     Strategy strategy;
@@ -63,10 +71,10 @@ Strategy Agent::index_to_strategy(StrategyIndex index) {
 }
 
 StrategyIndex Agent::strategy_to_index(Strategy strategy) {
-    assert(strategy[0] >= 0 && strategy[0] <=1);
-    assert(strategy[1] >= 0 && strategy[1] <=1);
-    assert(strategy[2] >= 0 && strategy[2] <=1);
-    
+    assert(strategy[0] >= 0 && strategy[0] <= 1);
+    assert(strategy[1] >= 0 && strategy[1] <= 1);
+    assert(strategy[2] >= 0 && strategy[2] <= 1);
+
     assert(std::abs(std::accumulate(strategy.begin(), strategy.end(), 0.0) - 1.0) < 1e-6);
 
     const auto sum = grid_size - 1;
@@ -95,4 +103,44 @@ bool Agent::valid_index(StrategyIndex index) {
     auto y = index % grid_size;
 
     return grid_size > x + y;
+}
+
+std::unique_ptr<Agent> Agent::from_json(const json &j) {
+    std::string type = j.at("type");
+    if (type == "monotone") {
+        Strategy strategy = j.at("strategy");
+        return std::make_unique<Monotone>(strategy);
+    } else if (type == "omniscient_hyper_q") {
+        auto estimation =  std::make_unique<Omniscient>();
+        double alpha = j.at("alpha");
+        double gamma = j.at("gamma");
+        return std::make_unique<HyperQ>(std::move(estimation), alpha, gamma);
+    } else if (type == "ema_hyper_q") {
+        double mu = j.at("mu");
+        auto estimation = std::make_unique<EMA>(mu);
+        double alpha = j.at("alpha");
+        double gamma = j.at("gamma");
+        return std::make_unique<HyperQ>(std::move(estimation), alpha, gamma);
+    } else if (type == "bayesian_hyper_q") {
+        double alpha = j.at("alpha");
+        double gamma = j.at("gamma");
+        double mu = j.at("mu");
+        return std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+    } else if (type == "bayesian_ultra_q") {
+        double alpha = j.at("alpha");
+        double gamma = j.at("gamma");
+        double mu = j.at("mu");
+        Similarity similarity = j.at("similarity");
+        return std::make_unique<BayesianUltraQ>(alpha, gamma, mu, similarity);
+    } else if (type == "iga") {
+        double step_size = j.at("step_size");
+        return std::make_unique<IGA>(step_size);
+    } else if (type == "phc") {
+        double alpha = j.at("alpha");
+        double delta = j.at("delta");
+        double gamma = j.at("gamma");
+        return std::make_unique<PHC>(alpha, delta, gamma);
+    } else {
+        throw std::runtime_error("Unknown agent type: " + type);
+    }
 }

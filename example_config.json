@@ -1,0 +1,23 @@
+{
+	"game": "rock_paper_scissors",
+	"exploration": {
+		"type": "epsilon_greedy",
+		"epsilon": 0.0001
+	},
+	"runs": 30,
+	"iterations": 2000000,
+	"agent_x": {
+		"type": "ema_hyper_q",
+		"mu": 0.005,
+		"alpha": 0.01,
+		"gamma": 0.9
+	},
+	"agent_y": {
+		"type": "monotone",
+		"strategy": [
+			1.0,
+			0.0,
+			0.0
+		]
+	}
+}

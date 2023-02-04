@@ -2,7 +2,7 @@
 #define IGA_H
 
 #include "Agent.h"
-#include "Definitions.h"
+#include "../utils/Definitions.h"
 #include <memory>
 
 class IGA : public Agent {
@@ -17,9 +17,6 @@ class IGA : public Agent {
         double step_size;
         // tables.
         Strategy policy;
-
-        // methods
-        int greedy(Strategy strat);
 };
 
 #endif //IGA_H

@@ -6,7 +6,10 @@
 #define HYPER_Q_STRATEGYESTIMATION_H
 
 #include <iostream>
-#include "Definitions.h"
+#include "../utils/Definitions.h"
+#include "../utils/json.hpp"
+
+using json = nlohmann::json;
 
 class StrategyEstimation {
 public:
@@ -17,6 +20,8 @@ public:
     virtual void random_restart() = 0;
 
     virtual ~StrategyEstimation() = default;
+
+    static std::unique_ptr<StrategyEstimation> from_json(const json &j);
 };
 
 

@@ -2,8 +2,8 @@
 // Created by ward on 12/31/22.
 //
 
-#ifndef HYPER_Q_MONOTONE_
-#define HYPER_Q_MONOTONE_
+#ifndef HYPER_Q_MONOTONE_H
+#define HYPER_Q_MONOTONE_H
 
 #include <cmath>
 #include "Agent.h"
@@ -30,4 +30,4 @@ private:
 
 };
 
-#endif //HYPER_Q_MONOTONE_
+#endif //HYPER_Q_MONOTONE_H

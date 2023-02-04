@@ -3,12 +3,12 @@
 
 #include <array>
 #include <cassert>
-#include "Monotone"
+#include "../agent/Monotone.h"
 #include "Game.h"
 
-class CooperationGame : public Game {
+class HillClimbing : public Game {
 public:
-    CooperationGame();
+    HillClimbing();
 
     Rewards step(Action action_x, Action action_y) override;
 

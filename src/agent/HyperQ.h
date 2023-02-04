@@ -6,8 +6,8 @@
 #define HYPER_Q_HYPERQ_H
 
 #include "Agent.h"
-#include "StrategyEstimation.h"
-#include "Definitions.h"
+#include "../estimation/StrategyEstimation.h"
+#include "../utils/Definitions.h"
 #include <memory>
 #include <limits>
 

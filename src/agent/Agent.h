@@ -8,7 +8,10 @@
 #include <string>
 #include <fstream>
 #include <tuple>
-#include "Definitions.h"
+#include "../utils/Definitions.h"
+#include "../utils/json.hpp"
+
+using json = nlohmann::json;
 
 class Agent {
 public:
@@ -21,6 +24,8 @@ public:
     virtual std::tuple<Action, Strategy, Reward> random_restart();
 
     static Strategy random_strategy();
+
+    static std::unique_ptr<Agent> from_json(const json &j);
 
 protected:
     static Action strategy_to_action(Strategy strategy);

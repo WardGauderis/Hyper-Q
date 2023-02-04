@@ -1,14 +1,14 @@
-#include "CooperationGame.h"
-#include "Monotone"
+#include "HillClimbing.h"
+#include "../agent/Monotone.h"
 #include <random>
 #include <tuple>
 
-CooperationGame::CooperationGame() {
+HillClimbing::HillClimbing() {
     std::tie(probability_matrix, reward_matrix1, reward_matrix2) = initialize_game_rewards();
 }
 
 std::tuple<std::array<std::array<double, 3>, 3>, std::array<std::array<double, 3>, 3>, std::array<std::array<double, 3>, 3>>
-CooperationGame::initialize_game_rewards() {
+HillClimbing::initialize_game_rewards() {
     std::array<std::array<double, 3>, 3> probability_matrix{};
     std::array<std::array<double, 3>, 3> reward_matrix1{};
     std::array<std::array<double, 3>, 3> reward_matrix2{};
@@ -29,7 +29,7 @@ CooperationGame::initialize_game_rewards() {
 }
 
 
-Rewards CooperationGame::step(Action action_x, Action action_y) {
+Rewards HillClimbing::step(Action action_x, Action action_y) {
     double probability = probability_matrix[action_x][action_y];
     std::random_device rd;
     std::mt19937 gen(rd());
