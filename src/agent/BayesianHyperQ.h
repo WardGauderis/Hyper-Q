@@ -13,14 +13,21 @@
 #include <complex>
 #include <numeric>
 #include <cassert>
+#include <optional>
 
 class BayesianHyperQ : public Agent {
 public:
-    BayesianHyperQ(double alpha, double gamma, double mu) : alpha(alpha), gamma(gamma), mu(mu) {
+    BayesianHyperQ(double alpha, double gamma, double mu, std::optional<double> init) : alpha(alpha), gamma(gamma),
+                                                                                        mu(mu) {
         for (auto &posterior: posterior_table) {
             posterior = 1.0 / num_strategies;
         }
-        hyper_q_table.fill(10);
+        if (init.has_value()) { hyper_q_table.fill(init.value()); }
+        else {
+            for (auto &q: hyper_q_table) {
+                q = static_cast<double>(rand()) / RAND_MAX;
+            }
+        }
     }
 
     std::tuple<Action, Strategy, Reward> act() override {

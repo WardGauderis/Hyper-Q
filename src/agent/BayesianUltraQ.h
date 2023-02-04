@@ -26,8 +26,8 @@ NLOHMANN_JSON_SERIALIZE_ENUM(Similarity, {
 
 class BayesianUltraQ : public BayesianHyperQ {
 public:
-    BayesianUltraQ(double alpha, double gamma, double mu, Similarity similarity) : BayesianHyperQ(alpha, gamma, mu),
-                                                                                   similarity(similarity) {}
+    BayesianUltraQ(double alpha, double gamma, double mu, Similarity similarity, std::optional<double> init)
+            : BayesianHyperQ(alpha, gamma, mu, init), similarity(similarity) {}
 
     double observe(Reward r, Action action_x, Strategy original_x, Action action_y, Strategy _y) override {
         update_posterior(action_y);
@@ -51,7 +51,7 @@ public:
                         s = x[action_x] * original_x[action_x];
                         break;
                     case Similarity::posterior:
-                        throw std::runtime_error("Not implemented");
+                        throw std::invalid_argument("Not implemented");
                     case Similarity::cosine:
                         for (unsigned int i = 0; i < x.size(); ++i)
                             s += x[i] * original_x[i];

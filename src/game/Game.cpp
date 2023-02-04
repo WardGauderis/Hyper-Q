@@ -14,6 +14,6 @@ std::unique_ptr<Game> Game::from_json(const json &j) {
     else if (game == "hill_climbing")
         return std::make_unique<HillClimbing>();
     else
-        throw std::runtime_error("Unknown game: " + game);
+        throw std::invalid_argument("Unknown game: " + game);
 }
 

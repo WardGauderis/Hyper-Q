@@ -111,27 +111,55 @@ std::unique_ptr<Agent> Agent::from_json(const json &j) {
         Strategy strategy = j.at("strategy");
         return std::make_unique<Monotone>(strategy);
     } else if (type == "omniscient_hyper_q") {
-        auto estimation =  std::make_unique<Omniscient>();
+        auto estimation = std::make_unique<Omniscient>();
         double alpha = j.at("alpha");
         double gamma = j.at("gamma");
-        return std::make_unique<HyperQ>(std::move(estimation), alpha, gamma);
+        std::optional<double> init;
+        auto init_j = j.at("init");
+        if (init_j.is_number()) {
+            init = init_j;
+        } else if (init_j != "random") {
+            throw std::invalid_argument("Unknown init value: " + std::string(init_j));
+        }
+        return std::make_unique<HyperQ>(std::move(estimation), alpha, gamma, init);
     } else if (type == "ema_hyper_q") {
         double mu = j.at("mu");
         auto estimation = std::make_unique<EMA>(mu);
         double alpha = j.at("alpha");
         double gamma = j.at("gamma");
-        return std::make_unique<HyperQ>(std::move(estimation), alpha, gamma);
+        std::optional<double> init;
+        auto init_j = j.at("init");
+        if (init_j.is_number()) {
+            init = init_j;
+        } else if (init_j != "random") {
+            throw std::invalid_argument("Unknown init value: " + std::string(init_j));
+        }
+        return std::make_unique<HyperQ>(std::move(estimation), alpha, gamma, init);
     } else if (type == "bayesian_hyper_q") {
         double alpha = j.at("alpha");
         double gamma = j.at("gamma");
         double mu = j.at("mu");
-        return std::make_unique<BayesianHyperQ>(alpha, gamma, mu);
+        std::optional<double> init;
+        auto init_j = j.at("init");
+        if (init_j.is_number()) {
+            init = init_j;
+        } else if (init_j != "random") {
+            throw std::invalid_argument("Unknown init value: " + std::string(init_j));
+        }
+        return std::make_unique<BayesianHyperQ>(alpha, gamma, mu, init);
     } else if (type == "bayesian_ultra_q") {
         double alpha = j.at("alpha");
         double gamma = j.at("gamma");
         double mu = j.at("mu");
         Similarity similarity = j.at("similarity");
-        return std::make_unique<BayesianUltraQ>(alpha, gamma, mu, similarity);
+        std::optional<double> init;
+        auto init_j = j.at("init");
+        if (init_j.is_number()) {
+            init = init_j;
+        } else if (init_j != "random") {
+            throw std::invalid_argument("Unknown init value: " + std::string(init_j));
+        }
+        return std::make_unique<BayesianUltraQ>(alpha, gamma, mu, similarity, init);
     } else if (type == "iga") {
         double step_size = j.at("step_size");
         return std::make_unique<IGA>(step_size);
@@ -139,8 +167,15 @@ std::unique_ptr<Agent> Agent::from_json(const json &j) {
         double alpha = j.at("alpha");
         double delta = j.at("delta");
         double gamma = j.at("gamma");
-        return std::make_unique<PHC>(alpha, delta, gamma);
+        std::optional<double> init;
+        auto init_j = j.at("init");
+        if (init_j.is_number()) {
+            init = init_j;
+        } else if (init_j != "random") {
+            throw std::invalid_argument("Unknown init value: " + std::string(init_j));
+        }
+        return std::make_unique<PHC>(alpha, delta, gamma, init);
     } else {
-        throw std::runtime_error("Unknown agent type: " + type);
+        throw std::invalid_argument("Unknown agent type: " + type);
     }
 }

@@ -15,7 +15,7 @@ std::unique_ptr<ExplorationMethod> ExplorationMethod::from_json(const json &j) {
     } else if (type == "epsilon_greedy_decay") {
         return std::make_unique<EpsilonGreedyDecay>();
     } else {
-        throw std::runtime_error("Unknown exploration method: " + type);
+        throw std::invalid_argument("Unknown exploration method: " + type);
     }
 }
 

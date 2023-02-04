@@ -4,13 +4,14 @@
 #include "Agent.h"
 #include "../utils/Definitions.h"
 #include <memory>
+#include <optional>
 
 static const unsigned int num_states = 9;
 static const unsigned int num_actions = 3;
 
 class PHC : public Agent {
 public:
-    PHC(float alpha_, float delta_, float gamma_);
+    PHC(float alpha_, float delta_, float gamma_, std::optional<double> init);
 
     std::tuple<Action, Strategy, Reward> act() override;
 

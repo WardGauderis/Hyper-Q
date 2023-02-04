@@ -13,7 +13,7 @@ std::unique_ptr<StrategyEstimation> StrategyEstimation::from_json(const json &j)
         double mu = j.at("mu");
         return std::make_unique<EMA>(mu);
     } else {
-        throw std::runtime_error("Unknown strategy estimation type: " + type);
+        throw std::invalid_argument("Unknown strategy estimation type: " + type);
     }
 }
 

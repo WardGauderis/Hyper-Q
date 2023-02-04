@@ -10,13 +10,20 @@
 #include "../utils/Definitions.h"
 #include <memory>
 #include <limits>
+#include <optional>
 
 
 class HyperQ : public Agent {
 public:
-    HyperQ(std::unique_ptr<StrategyEstimation> estimation, double alpha, double gamma) : estimation(
+    HyperQ(std::unique_ptr<StrategyEstimation> estimation, double alpha, double gamma, std::optional<double> init)
+            : estimation(
             std::move(estimation)), alpha(alpha), gamma(gamma) {
-        hyper_q_table.fill(10);
+        if (init.has_value()) { hyper_q_table.fill(init.value()); }
+        else {
+            for (auto &q: hyper_q_table) {
+                q = static_cast<double>(rand()) / RAND_MAX;
+            }
+        }
     }
 
     std::tuple<Action, Strategy, Reward> act() override {

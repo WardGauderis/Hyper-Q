@@ -4,7 +4,7 @@
 
 // http://www.cs.cmu.edu/~mmv/papers/01ijcai-mike.pdf
 
-PHC::PHC(float alpha_, float delta_, float gamma_) {
+PHC::PHC(float alpha_, float delta_, float gamma_, std::optional<double> init) {
     alpha = static_cast<double>(alpha_);
     delta = static_cast<double>(delta_);
     gamma = static_cast<double>(gamma_);
@@ -12,12 +12,16 @@ PHC::PHC(float alpha_, float delta_, float gamma_) {
     current_action = 0;
 
     // q table creation.
-    for (int state = 0; state < 9; state++) {
-        for (int action = 0; action < 3; action++) {
-            if (action == 0) {
-                q_table[state][action] = 0.1;
-            } else {
-                q_table[state][action] = 0.1;
+    if (init.has_value()) {
+        for (auto &q: q_table) {
+            for (auto &q_value: q) {
+                q_value = init.value();
+            }
+        }
+    } else {
+        for (auto &q: q_table) {
+            for (auto &q_value: q) {
+                q_value = static_cast<double>(rand()) / RAND_MAX;
             }
         }
     }

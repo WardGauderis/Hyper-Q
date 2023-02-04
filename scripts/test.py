@@ -23,6 +23,8 @@ agent_domains = {
     "similarity": [None, "likelihood", "likelihood_scaled", "cosine"],  # only ultra_q
     "step_size": [None, 0.0001, 0.001, 0.01, 0.1],  # only iga
     "delta": [None, 0.001, 0.01, 0.1],  # only phc
+    "init": [None, "random", -1, 0, 1, 10]
+    # not iga or monotone
 }
 
 
@@ -109,6 +111,10 @@ def agent_configs(domains):
         delta = d["delta"] is not None
         phc = d["type"] == "phc"
         if delta ^ phc:
+            continue
+
+        init = d["init"] is not None
+        if init ^ not_iga_or_monotone:
             continue
 
         yield remove_none(d)
