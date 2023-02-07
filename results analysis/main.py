@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 import json
+import platform
 
 plt.rcParams["figure.figsize"] = (10, 8)
 REWARDS_PLAYER_X = 2
@@ -204,7 +205,10 @@ def read_json_file(file_path):
 def get_directories_in_dir(target_dir):
     directories = [f.path for f in os.scandir(os.path.realpath(target_dir)) if f.is_dir()]
     # TODO: FOR LINUX/MAC: game_directory.split("/")[-1]
-    names = [directory.split("\\")[-1] for directory in directories]
+    if platform.system() == 'Windows':
+        names = [directory.split("\\")[-1] for directory in directories]
+    else:
+        names = [directory.split("/")[-1] for directory in directories]
     return directories, names
 
 DATA_ROOT = "example_data/results/"
