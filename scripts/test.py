@@ -8,25 +8,47 @@ runs = 32
 iterations = 2_000_000
 
 game_domains = {
-    "game": ["rock_paper_scissors", "hill_climbing"],
-    "exploration": ["random_restart", "epsilon_greedy", "epsilon_greedy_decay"],
-    "epsilon": [None, 0.0001, 0.001, 0.01, 0.1],  # only epsilon_greedy
-    "every": [None, 100, 1000, 10000],  # only random_restart
+    "game": ["rock_paper_scissors"],
+    "exploration": ["random_restart", "epsilon_greedy"],
+    "epsilon": [None, 0.001, 0.01],  # only epsilon_greedy
+    "every": [None, 1000, 5000],  # only random_restart
 }
 
 agent_domains = {
-    "type": ["monotone", "omniscient_hyper_q", "ema_hyper_q", "bayesian_hyper_q", "bayesian_ultra_q", "iga", "phc"],
-    "strategy": [None, [1, 0, 0], [1 / 2, 1 / 2, 0], [1 / 3, 1 / 3, 1 / 3]],  # only monotone
-    "mu": [None, 0.001, 0.005, 0.01],  # only ema_hyper_q, bayesian_hyper_q or bayesian_ultra_q
-    "alpha": [None, 0.005, 0.01, 0.05, 0.1],  # not iga or monotone
-    "gamma": [None, 0.8, 0.9, 0.99],  # not iga or monotone
+    "type": ["monotone", "omniscient_hyper_q", "bayesian_ultra_q", "iga", "phc"],
+    "strategy": [None, [1 / 2, 1 / 2, 0]],  # only monotone
+    "mu": [None, 0.005, 0.01],  # only ema_hyper_q, bayesian_hyper_q or bayesian_ultra_q
+    "alpha": [None, 0.005, 0.01, 0.05],  # not iga or monotone
+    "gamma": [None, 0.9],  # not iga or monotone
     "similarity": [None, "likelihood", "likelihood_scaled", "cosine"],  # only ultra_q
-    "step_size": [None, 0.0001, 0.001, 0.01, 0.1],  # only iga
-    "delta": [None, 0.001, 0.01, 0.1],  # only phc
-    "init": [None, "random", -1, 0, 1, 10]
-    # not iga or monotone
+    "step_size": [None, 0.01],  # only iga
+    "delta": [None, 0.01],  # only phc
+    "init": [None, "random", 0, 5]
 }
 
+
+# runs = 32
+# iterations = 2_000_000
+#
+# game_domains = {
+#     "game": ["rock_paper_scissors", "hill_climbing"],
+#     "exploration": ["random_restart", "epsilon_greedy", "epsilon_greedy_decay"],
+#     "epsilon": [None, 0.0001, 0.001, 0.01, 0.1],  # only epsilon_greedy
+#     "every": [None, 100, 1000, 10000],  # only random_restart
+# }
+#
+# agent_domains = {
+#     "type": ["monotone", "omniscient_hyper_q", "ema_hyper_q", "bayesian_hyper_q", "bayesian_ultra_q", "iga", "phc"],
+#     "strategy": [None, [1, 0, 0], [1 / 2, 1 / 2, 0], [1 / 3, 1 / 3, 1 / 3]],  # only monotone
+#     "mu": [None, 0.001, 0.005, 0.01],  # only ema_hyper_q, bayesian_hyper_q or bayesian_ultra_q
+#     "alpha": [None, 0.005, 0.01, 0.05, 0.1],  # not iga or monotone
+#     "gamma": [None, 0.8, 0.9, 0.99],  # not iga or monotone
+#     "similarity": [None, "likelihood", "likelihood_scaled", "cosine"],  # only ultra_q
+#     "step_size": [None, 0.0001, 0.001, 0.01, 0.1],  # only iga
+#     "delta": [None, 0.001, 0.01, 0.1],  # only phc
+#     "init": [None, "random", -1, 0, 1, 10]
+#     # not iga or monotone
+# }
 
 def remove_none(d):
     """
@@ -156,6 +178,13 @@ def test_configs(game_configs, agent_configs):
                 temp_y = {k for k, v in agent_config_y.items() if k not in ["type"]}
                 intersection = temp_x.intersection(temp_y)
                 if any(agent_config_x[k] != agent_config_y[k] for k in intersection):
+                    continue
+
+                # Only Bayesian ultra
+                if agent_config_x["type"] != "bayesian_ultra_q" and agent_config_y["type"] != "bayesian_ultra_q":
+                    continue
+
+                if sorted(agent_config_x) < sorted(agent_config_y):
                     continue
 
                 d = {
