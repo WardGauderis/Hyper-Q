@@ -40,9 +40,13 @@ EpsilonGreedy::act(const std::unique_ptr<Agent> &agent_x, const std::unique_ptr<
     Returns returns{};
     if (random < epsilon) {
         std::tie(returns.action_x, returns.strategy_x, returns.value_x) = agent_x->random_restart();
-        std::tie(returns.action_y, returns.strategy_y, returns.value_y) = agent_y->random_restart();
     } else {
         std::tie(returns.action_x, returns.strategy_x, returns.value_x) = agent_x->act();
+    }
+    random = static_cast<double>(rand()) / RAND_MAX;
+    if (random < epsilon) {
+        std::tie(returns.action_y, returns.strategy_y, returns.value_y) = agent_y->random_restart();
+    } else {
         std::tie(returns.action_y, returns.strategy_y, returns.value_y) = agent_y->act();
     }
     return returns;
@@ -54,9 +58,13 @@ Returns EpsilonGreedyDecay::act(const std::unique_ptr<Agent> &agent_x, const std
     Returns returns{};
     if (random < 1.0 / (1.0 + iteration)) {
         std::tie(returns.action_x, returns.strategy_x, returns.value_x) = agent_x->random_restart();
-        std::tie(returns.action_y, returns.strategy_y, returns.value_y) = agent_y->random_restart();
     } else {
         std::tie(returns.action_x, returns.strategy_x, returns.value_x) = agent_x->act();
+    }
+    random = static_cast<double>(rand()) / RAND_MAX;
+    if (random < 1.0 / (1.0 + iteration)) {
+        std::tie(returns.action_y, returns.strategy_y, returns.value_y) = agent_y->random_restart();
+    } else {
         std::tie(returns.action_y, returns.strategy_y, returns.value_y) = agent_y->act();
     }
     return returns;
