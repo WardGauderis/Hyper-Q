@@ -4,8 +4,8 @@ import os
 import subprocess
 
 # Should be multiple of #CPU cores
-runs = 1
-iterations = 1
+runs = 32
+iterations = 2_000_000
 
 game_domains = {
     "game": ["rock_paper_scissors"],
