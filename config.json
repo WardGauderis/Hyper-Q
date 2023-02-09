@@ -11,7 +11,7 @@
 		"mu": 0.005,
 		"alpha": 0.01,
 		"gamma": 0.9,
-		"init": "random
+		"init": "random"
 	},
 	"agent_y": {
 		"type": "monotone",
