@@ -18,7 +18,6 @@ ACTIONS_PLAYER_Y_STARTING_IDX = 7
 def load_experiment_data(target_dir):
     # Create an empty list to store the data from each file
     all_data = []
-    print(target_dir)
     # Iterate over the files in the target directory
     for _file_count, filename in enumerate(os.listdir(target_dir + "\\")):
         if filename == "config.json":
@@ -128,10 +127,10 @@ def plot_average_reward_hyperq_vs_other(hyper_q_experiments,
 
     if file_name:
         plt.savefig(file_name, dpi=300, bbox_inches="tight")
+        plt.clf()
 
     # Plot the data as before
-    plt.show()
-
+    # plt.show()
 
 def plot_strategy_over_time_single_agent(strategies_over_time, title, steps=None, file_name=None,  ma_window_size=2000):
     nb_experiments, max_steps, _ = strategies_over_time.shape
@@ -190,12 +189,6 @@ def plot_strategy_over_time_single_agent(strategies_over_time, title, steps=None
 
     plt.show()
 
-# def load_configuration(config_file):
-#     with open(config_file, 'r') as stream:
-#         # read content and return a dict
-
-#     return config
-
 def read_json_file(file_path):
     with open(file_path, 'r') as stream:
         # read content and return a dict
@@ -248,6 +241,7 @@ for game_directory, game_name in zip(game_directories, game_names):
                 avg_reward_X = np.mean(runs[:, :, REWARDS_PLAYER_X])
                 avg_reward_Y = np.mean(runs[:, :, REWARDS_PLAYER_Y])
                 print(f"Game: {game_name}, first agent: {first_agent}, second agent: {second_agent}, configuration: {configuration} - AVG REWARD X: {avg_reward_X} AVG REWARD Y: {avg_reward_Y}")
+                
 
 
 
