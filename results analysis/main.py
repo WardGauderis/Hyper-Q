@@ -190,8 +190,9 @@ def plot_strategy_over_time_single_agent(strategies_over_time, title, steps=None
 
     if file_name:
         plt.savefig(file_name, dpi=300, bbox_inches="tight")
+        plt.clf()
 
-    plt.show()
+    # plt.show()
 
 def read_json_file(file_path):
     with open(file_path, 'r') as stream:
@@ -238,18 +239,51 @@ for game_directory, game_name in zip(game_directories, game_names):
                 if runs is None:
                     print(f"Could not load data for {game_name}, {first_agent}, {second_agent}, {configuration}")
                     continue
-                
+
+
+
                 plot_average_reward_hyperq_vs_other([ runs ],
                                     title=f"Multiple agents vs. {first_agent}: Avg. reward per time step",
                                     agent_names=[agent_x_type, agent_y_type],
                                     ma_window_sizes=[5000],
                                     agent_idx=REWARDS_PLAYER_X, #todo: maybe diff number, old was 3
-                                    file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/{agent_x_type}_{agent_y_type}_{game}_{configuration}.png")
+                                    file_name=f"{agent_x_type}_{agent_y_type}_{game}_{configuration}.png")
+                
+
+                agent_x_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+                agent_y_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+
+                plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000,
+                                                     file_name=f"{second_agent}/strat_evol_{agent_x_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
+                plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000,
+                                                     file_name=f"strat_evol_{agent_y_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
+                
+
+
+
+
+
+                # plot_average_reward_hyperq_vs_other([ runs ],
+                #                     title=f"Multiple agents vs. {first_agent}: Avg. reward per time step",
+                #                     agent_names=[agent_x_type, agent_y_type],
+                #                     ma_window_sizes=[5000],
+                #                     agent_idx=REWARDS_PLAYER_X, #todo: maybe diff number, old was 3
+                #                     file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/{agent_x_type}_{agent_y_type}_{game}_{configuration}.png")
+                
+
+                # agent_x_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+                # agent_y_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+
+                # plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000,
+                #                                      file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_x_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
+                # plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000,
+                #                                      file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_y_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
 
                 avg_reward_X = np.mean(runs[:, :, REWARDS_PLAYER_X])
                 avg_reward_Y = np.mean(runs[:, :, REWARDS_PLAYER_Y])
                 print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration} - AVG X: { format(avg_reward_X,'.4f') } AVG Y: {format(avg_reward_Y,'.4f')}")
-                
+
+
 
 
 
