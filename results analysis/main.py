@@ -47,7 +47,11 @@ def load_experiment_data(target_dir):
             all_data.append(file_data)
 
     # Concatenate the data from all the files into a single ndarray
-    data = np.stack(all_data)
+    try:
+        data = np.stack(all_data)
+    except:
+        print("No data found in directory: ", target_dir)
+        return None
     return data
 
 
@@ -231,6 +235,10 @@ for game_directory, game_name in zip(game_directories, game_names):
                 game = config["game"] # eg rock_paper_scissors
 
                 runs = load_experiment_data(configuration_dir)
+                if runs is None:
+                    print(f"Could not load data for {game_name}, {first_agent}, {second_agent}, {configuration}")
+                    continue
+                
                 plot_average_reward_hyperq_vs_other([ runs ],
                                     title=f"Multiple agents vs. {first_agent}: Avg. reward per time step",
                                     agent_names=[agent_x_type, agent_y_type],
@@ -240,7 +248,7 @@ for game_directory, game_name in zip(game_directories, game_names):
 
                 avg_reward_X = np.mean(runs[:, :, REWARDS_PLAYER_X])
                 avg_reward_Y = np.mean(runs[:, :, REWARDS_PLAYER_Y])
-                print(f"Game: {game_name}, first agent: {first_agent}, second agent: {second_agent}, configuration: {configuration} - AVG REWARD X: {avg_reward_X} AVG REWARD Y: {avg_reward_Y}")
+                print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration} - AVG X: { format(avg_reward_X,'.4f') } AVG Y: {format(avg_reward_Y,'.4f')}")
                 
 
 
