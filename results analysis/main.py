@@ -14,6 +14,8 @@ REWARDS_PLAYER_Y = 3
 ACTIONS_PLAYER_X_STARTING_IDX = 4
 ACTIONS_PLAYER_Y_STARTING_IDX = 7
 
+DATA_ROOT = "example_data/results_test/"
+
 
 def load_experiment_data(target_dir):
     # Create an empty list to store the data from each file
@@ -209,92 +211,159 @@ def get_directories_in_dir(target_dir):
         names = [directory.split("/")[-1] for directory in directories]
     return directories, names
 
-DATA_ROOT = "example_data/results/"
-# LOGS_ROOT = "example_data/logs/"
 
-game_directories, game_names = get_directories_in_dir(DATA_ROOT)
-for game_directory, game_name in zip(game_directories, game_names):
-    # print(f"game: {game_name}")
-    first_agents_directories, first_agents = get_directories_in_dir(game_directory)
-    
-    for first_agent_dir, first_agent in zip(first_agents_directories, first_agents):
-        second_agents_directories, second_agents = get_directories_in_dir(first_agent_dir)
-    
-        runs_for_single_configuration = []
-        for second_agent_dir, second_agent in zip(second_agents_directories, second_agents):
-            configuration_directories, configurations = get_directories_in_dir(second_agent_dir)
+def graph_per_agent():
+    game_directories, game_names = get_directories_in_dir(DATA_ROOT)
+    for game_directory, game_name in zip(game_directories, game_names):
+        first_agents_directories, first_agents = get_directories_in_dir(game_directory)
+        
+        for first_agent_dir, first_agent in zip(first_agents_directories, first_agents):
+            second_agents_directories, second_agents = get_directories_in_dir(first_agent_dir)
+        
+            runs_for_single_configuration = []
+            for second_agent_dir, second_agent in zip(second_agents_directories, second_agents):
+                configuration_directories, configurations = get_directories_in_dir(second_agent_dir)
 
-            for configuration_dir, configuration in zip(configuration_directories, configurations):
+                for configuration_dir, configuration in zip(configuration_directories, configurations):
 
-                config = read_json_file(os.path.join(configuration_dir, "config.json"))
+                    config = read_json_file(os.path.join(configuration_dir, "config.json"))
 
-                nb_runs = config["runs"]
-                nb_iterations = config["iterations"]
-                exploration_type = config["exploration"]["type"] # eg rnd_restart
-                agent_x_type = config["agent_x"]["type"] # eg monotone
-                agent_y_type = config["agent_y"]["type"] # eg bayesian_hyper_q
-                game = config["game"] # eg rock_paper_scissors
+                    nb_runs = config["runs"]
+                    nb_iterations = config["iterations"]
+                    exploration_type = config["exploration"]["type"] # eg rnd_restart
+                    agent_x_type = config["agent_x"]["type"] # eg monotone
+                    agent_y_type = config["agent_y"]["type"] # eg bayesian_hyper_q
+                    game = config["game"] # eg rock_paper_scissors
 
-                runs = load_experiment_data(configuration_dir)
-                if runs is None:
-                    print(f"Could not load data for {game_name}, {first_agent}, {second_agent}, {configuration}")
-                    continue
+                    runs = load_experiment_data(configuration_dir)
+                    if runs is None:
+                        print(f"Could not load data for {game_name}, {first_agent}, {second_agent}, {configuration}")
+                        continue
 
 
 
-                plot_average_reward_hyperq_vs_other([ runs ],
-                                    title=f"Multiple agents vs. {first_agent}: Avg. reward per time step",
-                                    agent_names=[agent_x_type, agent_y_type],
-                                    ma_window_sizes=[5000],
-                                    agent_idx=REWARDS_PLAYER_X, #todo: maybe diff number, old was 3
-                                    file_name=f"{agent_x_type}_{agent_y_type}_{game}_{configuration}.png")
+
+
+
+                    plot_average_reward_hyperq_vs_other([ runs ],
+                                        title=f"Multiple agents vs. {first_agent}: Avg. reward per time step",
+                                        agent_names=[agent_x_type, agent_y_type],
+                                        ma_window_sizes=[5000],
+                                        agent_idx=REWARDS_PLAYER_X, #todo: maybe diff number, old was 3
+                                        file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/{agent_x_type}_{agent_y_type}_{game}_{configuration}.png")
+                    
+
+                    agent_x_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+                    agent_y_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+
+                    plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000,
+                                                        file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_x_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
+                    plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000,
+                                                        file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_y_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
+
+                    avg_reward_X = np.mean(runs[:, :, REWARDS_PLAYER_X])
+                    avg_reward_Y = np.mean(runs[:, :, REWARDS_PLAYER_Y])
+                    print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration} - AVG X: { format(avg_reward_X,'.4f') } AVG Y: {format(avg_reward_Y,'.4f')}")
+
+
+def average_reward_hyperq_vs_other(hyper_q_experiments, ma_window_sizes, subsampling_rate, agent_idx, steps=None, filename=None):
+    if steps is None:
+        nb_experiments, max_steps, _ = hyper_q_experiments[0].shape
+        steps = max_steps
+
+    for idx, experiment_data in enumerate(hyper_q_experiments):
+        nb_experiments, max_steps, _ = experiment_data.shape
+
+        # mean of axis 0 -> wants seq of len t
+        agent1_avg_rewards = np.mean(experiment_data[:, 0:steps, agent_idx], axis=0)
+
+        # compute moving average using np 
+        ma_rewards = np.convolve(agent1_avg_rewards, np.ones((ma_window_sizes,))/ma_window_sizes, mode='valid')
+
+    subsampled = ma_rewards[::subsampling_rate]
+
+    if filename is not None:
+        # save via np csv
+        np.savetxt(filename, subsampled, delimiter=",")
+
+    return subsampled
+
+
+def save_rewards_file():
+    game_directories, game_names = get_directories_in_dir(DATA_ROOT)
+    for game_directory, game_name in zip(game_directories, game_names):
+        first_agents_directories, first_agents = get_directories_in_dir(game_directory)
+        data_series = None # (nb_players, nb_rewards)
+        
+        for first_agent_dir, first_agent in zip(first_agents_directories, first_agents):
+            second_agents_directories, second_agents = get_directories_in_dir(first_agent_dir)
+        
+            runs_for_single_configuration = []
+            for second_agent_dir, second_agent in zip(second_agents_directories, second_agents):
+                configuration_directories, configurations = get_directories_in_dir(second_agent_dir)
+
+                for configuration_dir, configuration in zip(configuration_directories, configurations):
+
+                    config = read_json_file(os.path.join(configuration_dir, "config.json"))
+
+                    nb_runs = config["runs"]
+                    nb_iterations = config["iterations"]
+                    exploration_type = config["exploration"]["type"] # eg rnd_restart
+                    agent_x_type = config["agent_x"]["type"] # eg monotone
+                    agent_y_type = config["agent_y"]["type"] # eg bayesian_hyper_q
+                    game = config["game"] # eg rock_paper_scissors
+
+                    runs = load_experiment_data(configuration_dir)
+                    if runs is None:
+                        print(f"Could not load data for {game_name}, {first_agent}, {second_agent}, {configuration}")
+                        continue
+
+
+                    data = average_reward_hyperq_vs_other([ runs ],
+                                        ma_window_sizes=100_000,
+                                        subsampling_rate=200,
+                                        agent_idx=REWARDS_PLAYER_X, 
+                                        filename=f"{DATA_ROOT}/{game_name}/ag_x_rewards_{agent_x_type}_{agent_y_type}_{game}_{configuration}.csv"
+                                        )
+                    
+                    print(data.shape) #(251,)
                 
-
-                agent_x_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
-                agent_y_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
-
-                plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000,
-                                                     file_name=f"{second_agent}/strat_evol_{agent_x_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
-                plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000,
-                                                     file_name=f"strat_evol_{agent_y_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
-                
+                    avg_reward_X = np.mean(runs[:, :, REWARDS_PLAYER_X])
+                    avg_reward_Y = np.mean(runs[:, :, REWARDS_PLAYER_Y])
+                    print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration} - AVG X: { format(avg_reward_X,'.4f') } AVG Y: {format(avg_reward_Y,'.4f')}")
 
 
+def plot_average_rewards(directory):
+    # load in csv files from directory and plot them
+    files = os.listdir(directory)
+    csv_files = [file for file in files if file.endswith(".csv")]
+    csv_files = sorted(csv_files)
+
+    # plot all csv files
+    csv_file = csv_files[2]
+    # for csv_file in csv_files:
+    print(csv_file)
+        # if csv_flie contains "phc"
+        # if "phc" in csv_file:
+    data = np.loadtxt(os.path.join(directory, csv_file), delimiter=",")
+    plt.plot(data)
+        # break
 
 
 
-                # plot_average_reward_hyperq_vs_other([ runs ],
-                #                     title=f"Multiple agents vs. {first_agent}: Avg. reward per time step",
-                #                     agent_names=[agent_x_type, agent_y_type],
-                #                     ma_window_sizes=[5000],
-                #                     agent_idx=REWARDS_PLAYER_X, #todo: maybe diff number, old was 3
-                #                     file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/{agent_x_type}_{agent_y_type}_{game}_{configuration}.png")
-                
-
-                # agent_x_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
-                # agent_y_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
-
-                # plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000,
-                #                                      file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_x_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
-                # plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000,
-                #                                      file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_y_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
-
-                avg_reward_X = np.mean(runs[:, :, REWARDS_PLAYER_X])
-                avg_reward_Y = np.mean(runs[:, :, REWARDS_PLAYER_Y])
-                print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration} - AVG X: { format(avg_reward_X,'.4f') } AVG Y: {format(avg_reward_Y,'.4f')}")
+if __name__=="__main__":
+    plot_average_rewards(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_test\rock_paper_scissors")
 
 
 
 
 
+    # %%
+    data
 
 
 
-# %%
-
-
-
-# %%
+    # %%
 
 
 # plt.rcParams["figure.figsize"] = (10, 8)
