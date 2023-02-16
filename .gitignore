@@ -11,3 +11,12 @@ results analysis/results2/
 results analysis/results*/
 .DS_Store
 results analysis/example_data/*
+ALL_BUILD.vcxproj
+ALL_BUILD.vcxproj.filters
+Hyper_Q.vcxproj
+Hyper_Q.vcxproj.filters
+ZERO_CHECK.vcxproj
+ZERO_CHECK.vcxproj.filters
+*.sln
+run_0.txt
+temp.txt

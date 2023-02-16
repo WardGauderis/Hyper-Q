@@ -6,6 +6,19 @@ import pandas as pd
 import os
 import json
 import platform
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 plt.rcParams["figure.figsize"] = (10, 8)
 REWARDS_PLAYER_X = 2
@@ -333,26 +346,93 @@ def save_rewards_file():
                     print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration} - AVG X: { format(avg_reward_X,'.4f') } AVG Y: {format(avg_reward_Y,'.4f')}")
 
 
+# def plot_average_rewards(directory):
+#     # load in csv files from directory and plot them
+#     files = os.listdir(directory)
+#     csv_files = [file for file in files if file.endswith(".csv")]
+#     csv_files = sorted(csv_files)
+
+#     # plot all csv files
+#     # csv_file = csv_files[0]
+#     # for csv_file in csv_files:
+#         # if csv_flie contains "phc"
+#         # if "phc" in csv_file:
+#     data1 = np.loadtxt(os.path.join(directory, csv_files[0]), delimiter=",")
+#     data2 = np.loadtxt(os.path.join(directory, csv_files[1]), delimiter=",")
+#     plt.plot(data1)
+#     plt.plot(data2)
+
+#     data3 = np.loadtxt(os.path.join(directory, csv_files[2]), delimiter=",")
+#     data4 = np.loadtxt(os.path.join(directory, csv_files[3]), delimiter=",")
+
+
+#     # create a secondary y-axis
+#     ax2 = plt.gca().twinx()
+
+#     # plot the second line on the secondary y-axis
+#     ax2.plot(data3, color='r')
+#     ax2.plot(data4, color='r')
+
+#     # show the plot
+#     plt.show()
+
+
+
+
+
 def plot_average_rewards(directory):
     # load in csv files from directory and plot them
     files = os.listdir(directory)
     csv_files = [file for file in files if file.endswith(".csv")]
     csv_files = sorted(csv_files)
 
-    # plot all csv files
-    csv_file = csv_files[2]
-    # for csv_file in csv_files:
-    print(csv_file)
-        # if csv_flie contains "phc"
-        # if "phc" in csv_file:
-    data = np.loadtxt(os.path.join(directory, csv_file), delimiter=",")
-    plt.plot(data)
-        # break
+    data1 = np.loadtxt(os.path.join(directory, csv_files[0]), delimiter=",")
+    data2 = np.loadtxt(os.path.join(directory, csv_files[1]), delimiter=",")
+    data3 = np.loadtxt(os.path.join(directory, csv_files[2]), delimiter=",")
+    data4 = np.loadtxt(os.path.join(directory, csv_files[3]), delimiter=",")
+
+    # use a different color palette
+    colors = sns.color_palette('muted')
+
+    # plot the first line on the primary y-axis
+    fig, ax1 = plt.subplots()
+    ax1.plot(data1, color=colors[0], linewidth=2, label='Line 1 (Y1 axis)')
+    ax1.plot(data2, color=colors[1], linewidth=2, label='Line 2 (Y1 axis)')
+    ax1.set_xlabel('X axis', fontsize=14)
+    ax1.set_ylabel('Y1 axis', color=colors[0], fontsize=14)
+    ax1.tick_params(axis='y', labelcolor=colors[0], labelsize=12)
+
+    # create a secondary y-axis with a different scale
+    ax2 = ax1.twinx()
+    ax2.plot(data3, color=colors[2], linewidth=2, label='Line 3 (Y2 axis)')
+    ax2.plot(data4, color=colors[3], linewidth=2, label='Line 4 (Y2 axis)')
+    ax2.set_ylabel('Y2 axis', color=colors[2], fontsize=14)
+    ax2.tick_params(axis='y', labelcolor=colors[2], labelsize=12)
+
+    # adjust the scale of the secondary y-axis
+    ax2.set_ylim(min(data3.min(), data4.min()), max(data3.max(), data4.max()) * 1.1)
+
+    # set some space between the two y-axes
+    plt.subplots_adjust(right=0.8)
+    ax2.spines['right'].set_position(('axes', 1.1))
+
+    # add gridlines
+    ax1.grid(True, color='gray', linestyle='--', linewidth=0.5)
+    ax2.grid(True, color='gray', linestyle='--', linewidth=0.5)
+
+    # add legend to indicate which line corresponds to which axis
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax2.legend(lines1 + lines2, labels1 + labels2, loc='center right', fontsize=12)
+
+    plt.show()
+
+
 
 
 
 if __name__=="__main__":
-    plot_average_rewards(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_test\rock_paper_scissors")
+    # plot_average_rewards(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_test\rock_paper_scissors")
 
 
 
