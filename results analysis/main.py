@@ -211,7 +211,7 @@ def plot_strategy_over_time_single_agent(strategies_over_time, title, steps=None
         plt.savefig(file_name, dpi=300, bbox_inches="tight")
         plt.clf()
 
-    # plt.show()
+    plt.show()
 
 def read_json_file(file_path):
     with open(file_path, 'r') as stream:
@@ -542,11 +542,106 @@ def plot_average_rewards_hill_climbing(directory, game, marker_size=20, sampling
     plt.show()
 
 
+# def plot_strategies_for_all_data():
+#     game_directories, game_names = get_directories_in_dir(DATA_ROOT)
+#     for game_directory, game_name in zip(game_directories, game_names):
+#         # print(f"game: {game_name}")
+#         first_agents_directories, first_agents = get_directories_in_dir(game_directory)
+        
+#         for first_agent_dir, first_agent in zip(first_agents_directories, first_agents):
+#             second_agents_directories, second_agents = get_directories_in_dir(first_agent_dir)
+        
+#             runs_for_single_configuration = []
+#             for second_agent_dir, second_agent in zip(second_agents_directories, second_agents):
+#                 configuration_directories, configurations = get_directories_in_dir(second_agent_dir)
+
+#                 for configuration_dir, configuration in zip(configuration_directories, configurations):
+
+#                     config = read_json_file(os.path.join(configuration_dir, "config.json"))
+
+#                     nb_runs = config["runs"]
+#                     nb_iterations = config["iterations"]
+#                     exploration_type = config["exploration"]["type"] # eg rnd_restart
+#                     agent_x_type = config["agent_x"]["type"] # eg monotone
+#                     agent_y_type = config["agent_y"]["type"] # eg bayesian_hyper_q
+#                     game = config["game"] # eg rock_paper_scissors
+
+#                     runs = load_experiment_data(configuration_dir)
+#                     if runs is None:
+#                         print(f"Could not load data for {game_name}, {first_agent}, {second_agent}, {configuration}")
+#                         continue
+
+
+
+
+
+
+
+#                     # plot_average_reward_hyperq_vs_other([ runs ],
+#                     #                     title=f"Multiple agents vs. {first_agent}: Avg. reward per time step",
+#                     #                     agent_names=[agent_x_type, agent_y_type],
+#                     #                     ma_window_sizes=[5000],
+#                     #                     agent_idx=REWARDS_PLAYER_X, #todo: maybe diff number, old was 3
+#                     #                     file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/{agent_x_type}_{agent_y_type}_{game}_{configuration}.png")
+                    
+
+#                     # agent_x_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+#                     # agent_y_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+
+#                     # plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000,
+#                     #                                      file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_x_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
+#                     # plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000,
+#                     #                                      file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_y_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
+
+#                     avg_reward_X = np.mean(runs[:, :, REWARDS_PLAYER_X])
+#                     avg_reward_Y = np.mean(runs[:, :, REWARDS_PLAYER_Y])
+#                     print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration} - AVG X: { format(avg_reward_X,'.4f') } AVG Y: {format(avg_reward_Y,'.4f')}")
+
+
+
 
 if __name__=="__main__":
-    save_rewards_file()
-    plot_average_rewards_rock_paper_scissors(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\rock_paper_scissors", game="Rock paper scissors", marker_size=6, sampling_rate=40)
-    plot_average_rewards_hill_climbing(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\hill_climbing", game="Hill climbing", marker_size=6, sampling_rate=40)
+    runs = load_experiment_data(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\hill_climbing\bayesian_ultra_q\bayesian_ultra_q\1")
+    
+
+
+    game_name = "Hill Climbing"
+    agent_x_type = "bayesian_ultra_q"
+    agent_y_type = "bayesian_ultra_q"
+    second_agent = "bayesian_ultra_q"
+    game = game_name
+    configuration = "1"
+
+    agent_x_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+    agent_y_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+    plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000)
+    plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000)
+
+
+    #%%
+    print(runs.shape)
+
+    # take one run
+    run = runs[6]
+
+    # expand dimension
+    run = np.expand_dims(run, axis=0)
+
+    agent_x_experiment_strategies_over_time = run[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+    agent_y_experiment_strategies_over_time = run[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+
+    plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000)
+    plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000)
+
+    
+
+
+
+
+
+    # save_rewards_file()
+    # plot_average_rewards_rock_paper_scissors(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\rock_paper_scissors", game="Rock paper scissors", marker_size=6, sampling_rate=40)
+    # plot_average_rewards_hill_climbing(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\hill_climbing", game="Hill climbing", marker_size=6, sampling_rate=40)
 
 
 
