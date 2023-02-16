@@ -1,14 +1,14 @@
 {
 	"game": "rock_paper_scissors",
 	"exploration": {
-		"type": "epsilon_greedy",
-		"epsilon": 0.0001
+		"type": "random_restart",
+		"every": 10000
 	},
-	"runs": 30,
-	"iterations": 2000000,
+	"runs": 1,
+	"iterations": 300001,
 	"agent_x": {
-		"type": "ema_hyper_q",
-		"mu": 0.005,
+		"type": "phc",
+		"delta": 0.01,
 		"alpha": 0.01,
 		"gamma": 0.9,
 		"init": "random"

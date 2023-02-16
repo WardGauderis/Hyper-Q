@@ -317,7 +317,8 @@ def average_reward_hyperq_vs_other(experiment_data, ma_window_sizes, subsampling
 def save_rewards_file():
     game_directories, game_names = get_directories_in_dir(DATA_ROOT)
     for game_directory, game_name in zip(game_directories, game_names):
-        if game_name == "rock_paper_scissors":
+        if game_name == "hill_climbing":
+        # if game_name == "rock_paper_scissors":
             continue
 
         first_agents_directories, first_agents = get_directories_in_dir(game_directory)
@@ -348,7 +349,7 @@ def save_rewards_file():
 
                     #(251,)
                     data = average_reward_hyperq_vs_other(runs,
-                                        ma_window_sizes=10_000,
+                                        ma_window_sizes=1_000,
                                         # ma_window_sizes=100_000,
                                         subsampling_rate=100,
                                         agent_idx=REWARDS_PLAYER_X, 
@@ -379,6 +380,13 @@ def plot_average_rewards_rock_paper_scissors(directory, game, marker_size=20, sa
     colors = sns.color_palette('muted')
     fig, ax1 = plt.subplots()
 
+    line_colors_iga = [(0, 225, 255), (0, 135, 255), (0, 63, 255), (165, 189, 255)]
+    line_colors_phc = [(b/255, g/255, r/255) for (r, g, b) in line_colors_iga]
+    line_colors_iga = [(r/255, g/255, b/255) for (r, g, b) in line_colors_iga]
+
+
+
+
     # IGA
     for idx, file in enumerate(iga_files):
         # label = "x_iga_y_bayesian_ultra_q_g_rock_paper_scissors_c_10"
@@ -402,7 +410,7 @@ def plot_average_rewards_rock_paper_scissors(directory, game, marker_size=20, sa
 
         # rescale x axis to 1500000 steps
         x = np.linspace(0, 1500000, rew_data.shape[0])
-        ax1.plot(x, rew_data, color=colors[0], linewidth=2, label=label_name + " vs IGA", markersize=marker_size, marker=marker_styles[idx])
+        ax1.plot(x, rew_data, color=line_colors_iga[idx], linewidth=2, label=label_name + " vs IGA", markersize=marker_size, marker=marker_styles[idx])
 
    
     ax2 = ax1.twinx()
@@ -426,19 +434,15 @@ def plot_average_rewards_rock_paper_scissors(directory, game, marker_size=20, sa
         else:
             label_name = x_agent
 
-        rew_data = rew_data[::20]
+        rew_data = rew_data[::sampling_rate]
 
         # rescale x axis to 1500000 steps
         x = np.linspace(0, 1500000, rew_data.shape[0])
-        ax2.plot(x, rew_data, color=colors[1], linewidth=2, label=label_name + " vs PHC", markersize=20, marker=marker_styles[idx])
+        ax2.plot(x, rew_data, color=line_colors_phc[idx], linewidth=2, label=label_name + " vs PHC", markersize=marker_size, marker=marker_styles[idx])
 
 
-    shift = -0.001
-    ax1.set_ylim(-0.005 + shift, 0.005 + shift)
-
-
-    shift = 0
-    ax2.set_ylim(0.3 + shift, 0.5 + shift)
+    ax2.set_ylim(-0.1, 0.5)
+    ax1.set_ylim(-0.009, 0.07)
 
     # set some space between the two y-axes
     plt.subplots_adjust(right=0.8)
@@ -465,7 +469,7 @@ def plot_average_rewards_rock_paper_scissors(directory, game, marker_size=20, sa
     ax1.spines['right'].set_color('black')
     ax2.spines['left'].set_color('black')
 
-    ax2.legend(lines1 + lines2, labels1 + labels2, fontsize=10)
+    ax2.legend(lines1 + lines2, labels1 + labels2, fontsize=9, loc='upper left')
     # loc='upper right', 
 
     plt.title(f"{game}: Average rewards against IGA and PHC", fontsize=16)
@@ -506,18 +510,18 @@ def plot_average_rewards_hill_climbing(directory, game, marker_size=20, sampling
         rew_data = rew_data[::sampling_rate]
 
         x = np.linspace(0, 1500000, rew_data.shape[0])
-        plt.plot(x, rew_data, linewidth=2, label=label_name + " vs PHC", markersize=marker_size, marker=marker_styles[idx])
+        plt.plot(x, rew_data, linewidth=2, label=label_name, markersize=marker_size, marker=marker_styles[idx])
 
 
     shift = -0.001
-    # ax1.set_ylim(-0.005 + shift, 0.005 + shift)
+    plt.ylim(-14, -1)
 
     # add gridlines
     plt.grid(True, color='gray', linestyle='--', linewidth=0.5)
 
     plt.xlabel('Timesteps', fontsize=14)
     plt.tick_params(axis='y', labelsize=12, )
-    plt.ylabel('Avg reward vs IGA', fontsize=14)
+    plt.ylabel('Avg reward', fontsize=14)
 
 
 
@@ -540,17 +544,15 @@ def plot_average_rewards_hill_climbing(directory, game, marker_size=20, sampling
 
 
 if __name__=="__main__":
-    # save_rewards_file()
-    # plot_average_rewards_rock_paper_scissors(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_test\rock_paper_scissors", game="Rock paper scissors")
-    plot_average_rewards_hill_climbing(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\hill_climbing", game="Hill climbing", marker_size=10, sampling_rate=40)
+    save_rewards_file()
+    plot_average_rewards_rock_paper_scissors(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\rock_paper_scissors", game="Rock paper scissors", marker_size=6, sampling_rate=40)
+    plot_average_rewards_hill_climbing(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\hill_climbing", game="Hill climbing", marker_size=6, sampling_rate=40)
 
 
 
 
 
 
-    # %%
-    data
 
 
 
