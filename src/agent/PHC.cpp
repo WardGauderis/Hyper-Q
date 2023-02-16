@@ -9,7 +9,6 @@ PHC::PHC(float alpha_, float delta_, float gamma_, std::optional<double> init) {
     delta = static_cast<double>(delta_);
     gamma = static_cast<double>(gamma_);
     current_state = 0;
-    current_action = 0;
 
     // q table creation.
     if (init.has_value()) {
@@ -51,18 +50,18 @@ double PHC::observe(Reward r, Action action_x, Strategy x, Action action_y, Stra
     (void) true_y;
 
     // get next state.
-    unsigned long next_state = 3 * current_action + action_y;
+    unsigned long next_state = 3 * action_x + action_y;
 
     // get the q value for current state, and the max q value for the next state.
-    double q = q_table[current_state][current_action];
+    double q = q_table[current_state][action_x];
     double q_max_next = *std::max_element(q_table[next_state], q_table[next_state] + 3);
 
     // update q table.
-    q_table[current_state][current_action] = (1 - alpha) * q + alpha * (r + (gamma * q_max_next));
+    q_table[current_state][action_x] = (1 - alpha) * q + alpha * (r + (gamma * q_max_next));
 
     // update policy table.
     double update = 0;
-    if (current_action == static_cast<unsigned long>(std::distance(q_table[current_state],
+    if (action_x == static_cast<unsigned long>(std::distance(q_table[current_state],
                                                                    std::max_element(q_table[current_state],
                                                                                     q_table[current_state] + 3)))) {
         // i.e., if the current action equals argmax(Q[current_state]), then,
@@ -70,7 +69,7 @@ double PHC::observe(Reward r, Action action_x, Strategy x, Action action_y, Stra
     } else {
         update = (-delta) / (3 - 1);
     }
-    policy_table[current_state][current_action] += update;
+    policy_table[current_state][action_x] += update;
 
     // probability boundaries
     for (unsigned long state = 0; state < 9; state++) {

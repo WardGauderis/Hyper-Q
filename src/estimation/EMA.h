@@ -6,6 +6,7 @@
 #define HYPER_Q_EMA_H
 
 #include "StrategyEstimation.h"
+#include "../agent/Agent.h"
 
 
 class EMA : public StrategyEstimation {
