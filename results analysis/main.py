@@ -27,7 +27,11 @@ REWARDS_PLAYER_Y = 3
 ACTIONS_PLAYER_X_STARTING_IDX = 4
 ACTIONS_PLAYER_Y_STARTING_IDX = 7
 
-DATA_ROOT = "example_data/results_test/"
+DATA_ROOT = "example_data/results_official/"
+# DATA_ROOT = "example_data/results_test/"
+
+# change matplotlib graph size
+plt.rcParams["figure.figsize"] = (16, 9)
 
 
 def load_experiment_data(target_dir):
@@ -279,22 +283,30 @@ def graph_per_agent():
                     print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration} - AVG X: { format(avg_reward_X,'.4f') } AVG Y: {format(avg_reward_Y,'.4f')}")
 
 
-def average_reward_hyperq_vs_other(hyper_q_experiments, ma_window_sizes, subsampling_rate, agent_idx, steps=None, filename=None):
+def average_reward_hyperq_vs_other(experiment_data, ma_window_sizes, subsampling_rate, agent_idx, steps=None, filename=None):
     if steps is None:
-        nb_experiments, max_steps, _ = hyper_q_experiments[0].shape
+        nb_experiments, max_steps, _ = experiment_data.shape
         steps = max_steps
 
-    for idx, experiment_data in enumerate(hyper_q_experiments):
-        nb_experiments, max_steps, _ = experiment_data.shape
+    # for idx, experiment_data in enumerate(hyper_q_experiments):
+    nb_experiments, max_steps, _ = experiment_data.shape
 
-        # mean of axis 0 -> wants seq of len t
-        agent1_avg_rewards = np.mean(experiment_data[:, 0:steps, agent_idx], axis=0)
+    # mean of axis 0 -> wants seq of len t
+    agent1_avg_rewards = np.mean(experiment_data[:, 0:steps, agent_idx], axis=0)
 
-        # compute moving average using np 
-        ma_rewards = np.convolve(agent1_avg_rewards, np.ones((ma_window_sizes,))/ma_window_sizes, mode='valid')
+    # std of axis 0 -> wants seq of len t
+    agent1_std_rewards = np.std(experiment_data[:, 0:steps, agent_idx], axis=0)
 
-    subsampled = ma_rewards[::subsampling_rate]
+    # compute moving average using np 
+    ma_rewards = np.convolve(agent1_avg_rewards, np.ones((ma_window_sizes,))/ma_window_sizes, mode='valid')
+    ma_stds = np.convolve(agent1_std_rewards, np.ones((ma_window_sizes,))/ma_window_sizes, mode='valid')
 
+    subsampled_rewards = ma_rewards[::subsampling_rate]
+    subsampled_stds = ma_stds[::subsampling_rate]
+
+    # combine rewards and stds into single np array
+    subsampled = np.column_stack((subsampled_rewards, subsampled_stds))
+   
     if filename is not None:
         # save via np csv
         np.savetxt(filename, subsampled, delimiter=",")
@@ -305,8 +317,10 @@ def average_reward_hyperq_vs_other(hyper_q_experiments, ma_window_sizes, subsamp
 def save_rewards_file():
     game_directories, game_names = get_directories_in_dir(DATA_ROOT)
     for game_directory, game_name in zip(game_directories, game_names):
+        if game_name == "rock_paper_scissors":
+            continue
+
         first_agents_directories, first_agents = get_directories_in_dir(game_directory)
-        data_series = None # (nb_players, nb_rewards)
         
         for first_agent_dir, first_agent in zip(first_agents_directories, first_agents):
             second_agents_directories, second_agents = get_directories_in_dir(first_agent_dir)
@@ -326,113 +340,210 @@ def save_rewards_file():
                     agent_y_type = config["agent_y"]["type"] # eg bayesian_hyper_q
                     game = config["game"] # eg rock_paper_scissors
 
-                    runs = load_experiment_data(configuration_dir)
+                    runs = load_experiment_data(configuration_dir) # (nb_experiments, nb_iterations, vanalles)
                     if runs is None:
                         print(f"Could not load data for {game_name}, {first_agent}, {second_agent}, {configuration}")
                         continue
 
 
-                    data = average_reward_hyperq_vs_other([ runs ],
-                                        ma_window_sizes=100_000,
-                                        subsampling_rate=200,
+                    #(251,)
+                    data = average_reward_hyperq_vs_other(runs,
+                                        ma_window_sizes=10_000,
+                                        # ma_window_sizes=100_000,
+                                        subsampling_rate=100,
                                         agent_idx=REWARDS_PLAYER_X, 
-                                        filename=f"{DATA_ROOT}/{game_name}/ag_x_rewards_{agent_x_type}_{agent_y_type}_{game}_{configuration}.csv"
+                                        filename=f"{DATA_ROOT}/{game_name}/x_{agent_x_type}_y_{agent_y_type}_g_{game}_c_{configuration}.csv"
                                         )
                     
-                    print(data.shape) #(251,)
+                    print(data.shape) 
                 
                     avg_reward_X = np.mean(runs[:, :, REWARDS_PLAYER_X])
                     avg_reward_Y = np.mean(runs[:, :, REWARDS_PLAYER_Y])
                     print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration} - AVG X: { format(avg_reward_X,'.4f') } AVG Y: {format(avg_reward_Y,'.4f')}")
 
 
-# def plot_average_rewards(directory):
-#     # load in csv files from directory and plot them
-#     files = os.listdir(directory)
-#     csv_files = [file for file in files if file.endswith(".csv")]
-#     csv_files = sorted(csv_files)
 
-#     # plot all csv files
-#     # csv_file = csv_files[0]
-#     # for csv_file in csv_files:
-#         # if csv_flie contains "phc"
-#         # if "phc" in csv_file:
-#     data1 = np.loadtxt(os.path.join(directory, csv_files[0]), delimiter=",")
-#     data2 = np.loadtxt(os.path.join(directory, csv_files[1]), delimiter=",")
-#     plt.plot(data1)
-#     plt.plot(data2)
-
-#     data3 = np.loadtxt(os.path.join(directory, csv_files[2]), delimiter=",")
-#     data4 = np.loadtxt(os.path.join(directory, csv_files[3]), delimiter=",")
-
-
-#     # create a secondary y-axis
-#     ax2 = plt.gca().twinx()
-
-#     # plot the second line on the secondary y-axis
-#     ax2.plot(data3, color='r')
-#     ax2.plot(data4, color='r')
-
-#     # show the plot
-#     plt.show()
-
-
-
-
-
-def plot_average_rewards(directory):
+def plot_average_rewards_rock_paper_scissors(directory, game, marker_size=20, sampling_rate=20):
     # load in csv files from directory and plot them
     files = os.listdir(directory)
     csv_files = [file for file in files if file.endswith(".csv")]
     csv_files = sorted(csv_files)
 
-    data1 = np.loadtxt(os.path.join(directory, csv_files[0]), delimiter=",")
-    data2 = np.loadtxt(os.path.join(directory, csv_files[1]), delimiter=",")
-    data3 = np.loadtxt(os.path.join(directory, csv_files[2]), delimiter=",")
-    data4 = np.loadtxt(os.path.join(directory, csv_files[3]), delimiter=",")
+    # check if string contains "iga"
+    iga_files = [file for file in files if "iga" in file]
+    phc_files = [file for file in files if "phc" in file]
+
+    marker_styles = [ '.', ',', 'o', 'v', '^', '<', '>', '1', '2', '3', '4', 's', 'p', '*']
 
     # use a different color palette
     colors = sns.color_palette('muted')
-
-    # plot the first line on the primary y-axis
     fig, ax1 = plt.subplots()
-    ax1.plot(data1, color=colors[0], linewidth=2, label='Line 1 (Y1 axis)')
-    ax1.plot(data2, color=colors[1], linewidth=2, label='Line 2 (Y1 axis)')
-    ax1.set_xlabel('X axis', fontsize=14)
-    ax1.set_ylabel('Y1 axis', color=colors[0], fontsize=14)
-    ax1.tick_params(axis='y', labelcolor=colors[0], labelsize=12)
 
-    # create a secondary y-axis with a different scale
+    # IGA
+    for idx, file in enumerate(iga_files):
+        # label = "x_iga_y_bayesian_ultra_q_g_rock_paper_scissors_c_10"
+        x_agent = file.split("x_")[1] # iga of phc of omnisc...
+        x_agent = x_agent.split("_y_")[0]
+        
+        
+        y_agent = file.split("_y_")[1]
+        y_agent = y_agent.split("_g_")[0]
+
+        data = np.loadtxt(os.path.join(directory, file), delimiter=",")
+        rew_data = data[:, 0]; std_data = data[:, 1]
+        label_name = None
+        if x_agent == "iga":
+            rew_data = -rew_data
+            label_name = y_agent
+        else:
+            label_name = x_agent
+
+        rew_data = rew_data[::sampling_rate]
+
+        # rescale x axis to 1500000 steps
+        x = np.linspace(0, 1500000, rew_data.shape[0])
+        ax1.plot(x, rew_data, color=colors[0], linewidth=2, label=label_name + " vs IGA", markersize=marker_size, marker=marker_styles[idx])
+
+   
     ax2 = ax1.twinx()
-    ax2.plot(data3, color=colors[2], linewidth=2, label='Line 3 (Y2 axis)')
-    ax2.plot(data4, color=colors[3], linewidth=2, label='Line 4 (Y2 axis)')
-    ax2.set_ylabel('Y2 axis', color=colors[2], fontsize=14)
-    ax2.tick_params(axis='y', labelcolor=colors[2], labelsize=12)
 
-    # adjust the scale of the secondary y-axis
-    ax2.set_ylim(min(data3.min(), data4.min()), max(data3.max(), data4.max()) * 1.1)
+    # PHC
+    for idx, file in enumerate(phc_files):
+        # label = "x_iga_y_bayesian_ultra_q_g_rock_paper_scissors_c_10"
+        x_agent = file.split("x_")[1] # iga of phc of omnisc...
+        x_agent = x_agent.split("_y_")[0]
+        
+        
+        y_agent = file.split("_y_")[1]
+        y_agent = y_agent.split("_g_")[0]
+
+        data = np.loadtxt(os.path.join(directory, file), delimiter=",")
+        rew_data = data[:, 0]; std_data = data[:, 1]
+        label_name = None
+        if x_agent == "phc":
+            rew_data = -rew_data
+            label_name = y_agent
+        else:
+            label_name = x_agent
+
+        rew_data = rew_data[::20]
+
+        # rescale x axis to 1500000 steps
+        x = np.linspace(0, 1500000, rew_data.shape[0])
+        ax2.plot(x, rew_data, color=colors[1], linewidth=2, label=label_name + " vs PHC", markersize=20, marker=marker_styles[idx])
+
+
+    shift = -0.001
+    ax1.set_ylim(-0.005 + shift, 0.005 + shift)
+
+
+    shift = 0
+    ax2.set_ylim(0.3 + shift, 0.5 + shift)
 
     # set some space between the two y-axes
     plt.subplots_adjust(right=0.8)
-    ax2.spines['right'].set_position(('axes', 1.1))
 
     # add gridlines
     ax1.grid(True, color='gray', linestyle='--', linewidth=0.5)
     ax2.grid(True, color='gray', linestyle='--', linewidth=0.5)
 
+    ax1.set_xlabel('Timesteps', fontsize=14)
+    ax1.tick_params(axis='y', labelsize=12, color=colors[0])
+    ax2.tick_params(axis='y', labelsize=12, color=colors[1])
+
+    ax1.set_ylabel('Avg reward vs IGA', fontsize=14, color=colors[0])
+    ax2.set_ylabel('Avg reward vs PHC', fontsize=14, color=colors[1])
+
+
+
     # add legend to indicate which line corresponds to which axis
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    ax2.legend(lines1 + lines2, labels1 + labels2, loc='center right', fontsize=12)
+    ax2.spines['right'].set_color('black')
 
+    # change axes colours
+    ax1.spines['right'].set_color('black')
+    ax2.spines['left'].set_color('black')
+
+    ax2.legend(lines1 + lines2, labels1 + labels2, fontsize=10)
+    # loc='upper right', 
+
+    plt.title(f"{game}: Average rewards against IGA and PHC", fontsize=16)
+
+    # move legend dynamically
+
+    # save plot
+    plt.savefig("FINAL_average_rewards.png")
+    plt.show()
+
+
+def plot_average_rewards_hill_climbing(directory, game, marker_size=20, sampling_rate=20):
+    # load in csv files from directory and plot them
+    files = os.listdir(directory)
+    csv_files = [file for file in files if file.endswith(".csv")]
+    csv_files = sorted(csv_files)
+
+    marker_styles = [ '.', ',', 'o', 'v', '^', '<', '>', '1', '2', '3', '4', 's', 'p', '*']
+
+    # use a different color palette
+    colors = sns.color_palette('muted')
+
+    for idx, file in enumerate(csv_files):
+        # x_ema_y_ema_g_hill_climbing_c_1
+        x_agent = file.split("x_")[1] # iga of phc of omnisc...
+        x_agent = x_agent.split("_y_")[0]
+        y_agent = file.split("_y_")[1]
+        y_agent = y_agent.split("_g_")[0]
+        data = np.loadtxt(os.path.join(directory, file), delimiter=",")
+        rew_data = data[:, 0]; std_data = data[:, 1]
+        label_name = None
+        if x_agent == "phc":
+            rew_data = -rew_data
+            label_name = y_agent
+        else:
+            label_name = x_agent
+
+        rew_data = rew_data[::sampling_rate]
+
+        x = np.linspace(0, 1500000, rew_data.shape[0])
+        plt.plot(x, rew_data, linewidth=2, label=label_name + " vs PHC", markersize=marker_size, marker=marker_styles[idx])
+
+
+    shift = -0.001
+    # ax1.set_ylim(-0.005 + shift, 0.005 + shift)
+
+    # add gridlines
+    plt.grid(True, color='gray', linestyle='--', linewidth=0.5)
+
+    plt.xlabel('Timesteps', fontsize=14)
+    plt.tick_params(axis='y', labelsize=12, )
+    plt.ylabel('Avg reward vs IGA', fontsize=14)
+
+
+
+    # add legend to indicate which line corresponds to which axis
+    # lines1, labels1 = ax1.get_legend_handles_labels()
+    # lines2, labels2 = ax2.get_legend_handles_labels()
+
+    # plt.legend(lines1 + lines2, labels1 + labels2, fontsize=10)
+    # loc='upper right', 
+
+    plt.title(f"{game}: Average rewards when agents play against themselves", fontsize=16)
+
+    # show legend
+    plt.legend()
+
+    # save plot
+    plt.savefig(f"{game}_FINAL_average_rewards.png")
     plt.show()
 
 
 
-
-
 if __name__=="__main__":
-    # plot_average_rewards(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_test\rock_paper_scissors")
+    # save_rewards_file()
+    # plot_average_rewards_rock_paper_scissors(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_test\rock_paper_scissors", game="Rock paper scissors")
+    plot_average_rewards_hill_climbing(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\hill_climbing", game="Hill climbing", marker_size=10, sampling_rate=40)
+
 
 
 
