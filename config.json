@@ -2,7 +2,7 @@
 	"game": "rock_paper_scissors",
 	"exploration": {
 		"type": "epsilon_greedy",
-		"epsilon": 0.0001
+		"epsilon": 0.01
 	},
 	"runs": 20,
 	"iterations": 100000,
