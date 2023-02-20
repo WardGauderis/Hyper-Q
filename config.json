@@ -1,8 +1,8 @@
 {
 	"game": "rock_paper_scissors",
 	"exploration": {
-		"type": "random_restart",
-		"every": 10000
+		"type": "epsilon_greedy",
+		"epsilon": 0.01
 	},
 	"runs": 1,
 	"iterations": 300001,

@@ -64,8 +64,8 @@ double PHC::observe(Reward r, Action action_x, Strategy x, Action action_y, Stra
     // update policy table.
     double update = 0;
     if (action_x == static_cast<unsigned long>(std::distance(q_table[current_state],
-                                                             std::max_element(q_table[current_state],
-                                                                              q_table[current_state] + 3)))) {
+                                                                   std::max_element(q_table[current_state],
+                                                                                    q_table[current_state] + 3)))) {
         // i.e., if the current action equals argmax(Q[current_state]), then,
         update = delta;
     } else {
