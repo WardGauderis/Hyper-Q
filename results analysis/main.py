@@ -317,8 +317,8 @@ def average_reward_hyperq_vs_other(experiment_data, ma_window_sizes, subsampling
 def save_rewards_file():
     game_directories, game_names = get_directories_in_dir(DATA_ROOT)
     for game_directory, game_name in zip(game_directories, game_names):
-        # rock_paper_scissors
-        if not game_name == "hill_climbing":
+        #  hill_climbing
+        if not game_name == "rock_paper_scissors":
             continue
 
         first_agents_directories, first_agents = get_directories_in_dir(game_directory)
@@ -440,9 +440,10 @@ def plot_average_rewards_rock_paper_scissors(directory, game, marker_size=20, sa
         x = np.linspace(0, 1500000, rew_data.shape[0])
         ax2.plot(x, rew_data, color=line_colors_phc[idx], linewidth=2, label=label_name + " vs PHC", markersize=marker_size, marker=marker_styles[idx])
 
-
-    ax2.set_ylim(-0.1, 0.5)
-    ax1.set_ylim(-0.009, 0.07)
+    shift = - .05
+    ax1.set_ylim(-0.009  + shift, 0.07 + shift)
+    # ax2.set_ylim(-0.009, 0.07)
+    ax2.set_ylim(-1, 1)
 
     # set some space between the two y-axes
     plt.subplots_adjust(right=0.8)
@@ -618,13 +619,13 @@ if __name__=="__main__":
     # plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000)
 
 
-    # #%%
-    # print(runs.shape)
+    # # #%%
+    # # print(runs.shape)
 
-    # # take one run
+    # # # take one run
     # run = runs[6]
 
-    # # expand dimension
+    # # # expand dimension
     # run = np.expand_dims(run, axis=0)
 
     # agent_x_experiment_strategies_over_time = run[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
@@ -639,9 +640,9 @@ if __name__=="__main__":
 
 
 
-    save_rewards_file()
-    # plot_average_rewards_rock_paper_scissors(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\rock_paper_scissors", game="Rock paper scissors", marker_size=6, sampling_rate=40)
-    plot_average_rewards_hill_climbing(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\hill_climbing", game="Hill climbing", marker_size=6, sampling_rate=40)
+    # save_rewards_file()
+    plot_average_rewards_rock_paper_scissors(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\rock_paper_scissors", game="Rock paper scissors", marker_size=6, sampling_rate=40)
+    # plot_average_rewards_hill_climbing(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\hill_climbing", game="Hill climbing", marker_size=6, sampling_rate=40)
 
 
 
