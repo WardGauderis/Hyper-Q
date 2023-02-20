@@ -49,7 +49,6 @@ double PHC::observe(Reward r, Action action_x, Strategy x, Action action_y, Stra
     (void) x;
     (void) true_y;
 
-    // replace all current_action w/ action_x
     // get next state.
     unsigned long next_state = 3 * action_x + action_y;
 
