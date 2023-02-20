@@ -23,7 +23,7 @@ private:
     double delta;
     double gamma;
     unsigned long current_state;
-    unsigned long current_action;
+
     // tables.
     double q_table[num_states][num_actions]{};
     Strategy policy_table[num_states]{};

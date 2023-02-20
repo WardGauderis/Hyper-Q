@@ -9,7 +9,6 @@ PHC::PHC(float alpha_, float delta_, float gamma_, std::optional<double> init) {
     delta = static_cast<double>(delta_);
     gamma = static_cast<double>(gamma_);
     current_state = 0;
-    //current_action = 0; TODO: REMOVE HERE
 
     // q table creation.
     if (init.has_value()) {
