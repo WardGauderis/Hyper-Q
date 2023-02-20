@@ -54,7 +54,7 @@ void run_test(const std::string &output_file,
         }
 
         if (false) {
-//            if (i % 500000 == 500000 - 1) {
+//            if (i % 100000 == 100000 - 1) {
             std::cout << "Step " << i << ", output: " << output_file << std::endl;
             std::cout << "Strategy x: " << r.strategy_x[0] << " " << r.strategy_x[1] << " " << r.strategy_x[2]
                       << " Bellman: "

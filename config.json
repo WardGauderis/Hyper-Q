@@ -4,14 +4,15 @@
 		"type": "epsilon_greedy",
 		"epsilon": 0.0001
 	},
-	"runs": 30,
-	"iterations": 2000000,
+	"runs": 20,
+	"iterations": 100000,
 	"agent_x": {
-		"type": "ema_hyper_q",
+		"type": "bayesian_ultra_q",
 		"mu": 0.005,
 		"alpha": 0.01,
 		"gamma": 0.9,
-		"init": "random"
+		"init": "random",
+		"similarity": "likelihood"
 	},
 	"agent_y": {
 		"type": "monotone",
