@@ -27,7 +27,8 @@ REWARDS_PLAYER_Y = 3
 ACTIONS_PLAYER_X_STARTING_IDX = 4
 ACTIONS_PLAYER_Y_STARTING_IDX = 7
 
-DATA_ROOT = "example_data/cosine/"
+DATA_ROOT = "example_data/ward3/"
+# DATA_ROOT = "example_data/cosine/"
 # DATA_ROOT = "example_data/fine_tune_ultr/"
 # DATA_ROOT = "example_data/results_official/"
 # DATA_ROOT = "example_data/results_test/"
@@ -259,7 +260,10 @@ def graph_per_agent():
                     alpha = config['agent_x'].get("alpha") # eg 0.1
                     
                     # temp:
-                    similarity = config["agent_x"]["similarity"]
+                    try:
+                        similarity = config["agent_x"]["similarity"]
+                    except:
+                        similarity = None
 
 
                     runs = load_experiment_data(configuration_dir)
@@ -272,24 +276,25 @@ def graph_per_agent():
 
 
 
-                    # plot_average_reward_hyperq_vs_other([ runs ],
-                    #                     title=f"Multiple agents vs. {first_agent}: Avg. reward per time step",
-                    #                     agent_names=[agent_x_type, agent_y_type],
-                    #                     ma_window_sizes=[5000],
-                    #                     agent_idx=REWARDS_PLAYER_X, #todo: maybe diff number, old was 3
-                    #                     file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/{agent_x_type}_{agent_y_type}_{game}_{configuration}.png")
+                    plot_average_reward_hyperq_vs_other([ runs ],
+                                        title=f"Multiple agents vs. {first_agent}: Avg. reward per time step",
+                                        agent_names=[agent_x_type, agent_y_type],
+                                        ma_window_sizes=[5000],
+                                        agent_idx=REWARDS_PLAYER_X, #todo: maybe diff number, old was 3
+                                        file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/{agent_x_type}_{agent_y_type}_{game}_{configuration}.png")
                     
 
                     agent_x_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
                     agent_y_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
 
-                    # plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000,
-                    #                                     file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_x_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
-                    # plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000,
-                    #                                     file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_y_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
+                    #plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000,
+                    #                                   file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_x_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
+                    #plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000,
+                    #                                    file_name=f"{DATA_ROOT}/{game_name}/{first_agent}/{second_agent}/strat_evol_{agent_y_type}__{agent_x_type}vs{agent_y_type}_{game}_{configuration}.png")
 
                     avg_reward_X = np.mean(runs[:, :, REWARDS_PLAYER_X])
                     avg_reward_Y = np.mean(runs[:, :, REWARDS_PLAYER_Y])
+                    # print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration}, expl typ: {exploration_type}, epsil: {epsilon}, alph: {alpha} - AVG Y: {format(avg_reward_Y,'.4f')}")
                     print(f"G: {game_name}, first agent: {first_agent}, second agent: {second_agent}, x_t: {agent_x_type}, y_t: {agent_y_type}, config: {configuration}, sim: {similarity}, expl typ: {exploration_type}, epsil: {epsilon}, alph: {alpha} - AVG Y: {format(avg_reward_Y,'.4f')}")
 
 
@@ -418,6 +423,10 @@ def plot_average_rewards_rock_paper_scissors(directory, game, marker_size=20, sa
 
         rew_data = rew_data[::sampling_rate]
 
+        # replace _ with space in label_name
+        label_name = label_name.replace("_", " ")
+        label_name = label_name[0].upper() + label_name[1:]
+
         # rescale x axis to 1500000 steps
         x = np.linspace(0, 1500000, rew_data.shape[0])
         ax1.plot(x, rew_data, color=line_colors_iga[idx], linewidth=2, label=label_name + " vs IGA", markersize=marker_size, marker=marker_styles[idx])
@@ -446,6 +455,10 @@ def plot_average_rewards_rock_paper_scissors(directory, game, marker_size=20, sa
 
         rew_data = rew_data[::sampling_rate]
 
+        label_name = label_name.replace("_", " ")
+        # captialise first letter
+        label_name = label_name[0].upper() + label_name[1:]
+
         # rescale x axis to 1500000 steps
         x = np.linspace(0, 1500000, rew_data.shape[0])
         ax2.plot(x, rew_data, color=line_colors_phc[idx], linewidth=2, label=label_name + " vs PHC", markersize=marker_size, marker=marker_styles[idx])
@@ -459,15 +472,15 @@ def plot_average_rewards_rock_paper_scissors(directory, game, marker_size=20, sa
     plt.subplots_adjust(right=0.8)
 
     # add gridlines
-    ax1.grid(True, color='gray', linestyle='--', linewidth=0.5)
-    ax2.grid(True, color='gray', linestyle='--', linewidth=0.5)
+    # ax1.grid(True, color='gray', linestyle='--', linewidth=0.5)
+    # ax2.grid(True, color='gray', linestyle='--', linewidth=0.5)
 
     ax1.set_xlabel('Timesteps', fontsize=14)
     ax1.tick_params(axis='y', labelsize=12, color=colors[0])
     ax2.tick_params(axis='y', labelsize=12, color=colors[1])
 
-    ax1.set_ylabel('Avg reward vs IGA', fontsize=14, color=colors[0])
-    ax2.set_ylabel('Avg reward vs PHC', fontsize=14, color=colors[1])
+    ax1.set_ylabel('Average reward vs IGA', fontsize=14, color=colors[0])
+    ax2.set_ylabel('Average reward vs PHC', fontsize=14, color=colors[1])
 
 
 
@@ -480,12 +493,15 @@ def plot_average_rewards_rock_paper_scissors(directory, game, marker_size=20, sa
     ax1.spines['right'].set_color('black')
     ax2.spines['left'].set_color('black')
 
-    ax2.legend(lines1 + lines2, labels1 + labels2, fontsize=9, loc='upper left')
-    # loc='upper right', 
-
-    plt.title(f"{game}: Average rewards against IGA and PHC", fontsize=16)
+    # ax2.legend(lines1 + lines2, labels1 + labels2, fontsize=9, loc='upper left')
+    # legend bottom left
+    ax2.legend(lines1 + lines2, labels1 + labels2, fontsize=12)
+    # loc='lower left'
+    # plt.title(f"{game}: Average rewards against IGA and PHC", fontsize=16)
 
     # move legend dynamically
+
+    
 
     # save plot
     plt.savefig("FINAL_average_rewards.png")
@@ -532,7 +548,7 @@ def plot_average_rewards_hill_climbing(directory, game, marker_size=20, sampling
 
     plt.xlabel('Timesteps', fontsize=14)
     plt.tick_params(axis='y', labelsize=12, )
-    plt.ylabel('Avg reward', fontsize=14)
+    plt.ylabel('Average reward', fontsize=14)
 
 
 
@@ -614,34 +630,37 @@ def plot_average_rewards_hill_climbing(directory, game, marker_size=20, sampling
 if __name__=="__main__":
 
     # for fine tuning and selecting best configs
+    graph_per_agent()
+
+
     # runs = load_experiment_data(r"C:\GitHub\Hyper-Q\results analysis\example_data\cosine\rock_paper_scissors\bayesian_hyper_q\bayesian_ultra_q\1")
-    runs = load_experiment_data(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\hill_climbing\bayesian_ultra_q\bayesian_ultra_q\1")
+    # runs = load_experiment_data(r"C:\GitHub\Hyper-Q\results analysis\example_data\results_official\hill_climbing\bayesian_ultra_q\bayesian_ultra_q\1")
     
 
-    # visualise single strategy evolution
-    game_name = "Hill Climbing"
-    agent_x_type = "bayesian_ultra_q"
-    agent_y_type = "bayesian_ultra_q"
-    second_agent = "bayesian_ultra_q"
-    game = game_name
-    configuration = "1"
+    # # visualise single strategy evolution
+    # game_name = "Hill Climbing"
+    # agent_x_type = "bayesian_ultra_q"
+    # agent_y_type = "bayesian_ultra_q"
+    # second_agent = "bayesian_ultra_q"
+    # game = game_name
+    # configuration = "1"
 
-    # agent_x_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
-    # agent_y_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+    # # agent_x_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+    # # agent_y_experiment_strategies_over_time = runs[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+    # # plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000)
+    # # plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000)
+
+    # # take one run
+    # run = runs[2]
+
+    # # # expand dimension
+    # run = np.expand_dims(run, axis=0)
+
+    # agent_x_experiment_strategies_over_time = run[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
+    # agent_y_experiment_strategies_over_time = run[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
+
     # plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000)
     # plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000)
-
-    # take one run
-    run = runs[2]
-
-    # # expand dimension
-    run = np.expand_dims(run, axis=0)
-
-    agent_x_experiment_strategies_over_time = run[:, :, ACTIONS_PLAYER_X_STARTING_IDX:ACTIONS_PLAYER_X_STARTING_IDX+3]
-    agent_y_experiment_strategies_over_time = run[:, :, ACTIONS_PLAYER_Y_STARTING_IDX:ACTIONS_PLAYER_Y_STARTING_IDX+3]
-
-    plot_strategy_over_time_single_agent(agent_x_experiment_strategies_over_time, title=f"{game_name}: {agent_x_type} strategy evolution", ma_window_size=5000)
-    plot_strategy_over_time_single_agent(agent_y_experiment_strategies_over_time, title=f"{game_name}: {agent_y_type} strategy evolution", ma_window_size=5000)
 
 
 
@@ -668,3 +687,5 @@ if __name__=="__main__":
 
 
 
+
+# %%
